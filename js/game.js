@@ -1,9 +1,23 @@
 const textOutput = document.getElementById("text-output");
 const choicesDiv = document.getElementById("choices");
 
-// Display text
-function showText(text) {
-    textOutput.textContent = text;
+// TYPEWRITER TEXT SYSTEM -------------------------------
+function typeText(text, callback) {
+    const box = document.getElementById("text-box");
+    const choices = document.getElementById("choices");
+    box.innerHTML = "";
+    choices.innerHTML = ""; // hide buttons until finished
+
+    let i = 0;
+    let speed = 32; // typing delay
+    function type() {
+        if (i < text.length) {
+            box.innerHTML += text.charAt(i);
+            i++;
+            setTimeout(type, speed);
+        } else if (callback) callback();
+    }
+    type();
 }
 
 // Display choices
@@ -20,7 +34,7 @@ function showChoices(choices) {
 
 // Scene 1
 function scene1() {
-    showText(`The year is 1851. Mexico has just lost the war, and the United States has taken California.
+    typeText(`The year is 1851. Mexico has just lost the war, and the United States has taken California.
 You walk beside your wagon headed for the Sierra Nevada, chasing the smell of gold.
 
 You encounter NPC1, a freedman setting up camp.
@@ -36,7 +50,7 @@ Here, they say the land is free. You think it'll be free for someone like me?"`)
 
 // Scene 2
 function scene2() {
-    showText(`You reach a river valley crowded with tents and rough shacks.
+    typeText(`You reach a river valley crowded with tents and rough shacks.
 Gold Rush is in full swing.
 
 NPC2, a militia man, approaches.
@@ -51,7 +65,7 @@ NPC2: "The name’s NPC2. State paid us per head to keep settlers safe."`);
 
 // Scene NPC3
 function sceneNPC3() {
-    showText(`A Maidu woman approaches carrying baskets.
+    typeText(`A Maidu woman approaches carrying baskets.
 NPC3: "The men who came before you cut down our oaks, drove off our game, and turned the water into mud.
 Will you buy something from us?"`);
 
@@ -64,7 +78,7 @@ Will you buy something from us?"`);
 
 // Scene 3
 function scene3() {
-    showText(`You find a place to claim, but your gold search fails. Night falls.
+    typeText(`You find a place to claim, but your gold search fails. Night falls.
 Next morning, you see new notices outside the courthouse about:
 - Protection of Indians
 - Foreign Miner’s Tax
@@ -81,7 +95,7 @@ NPC1 watches, expecting your response.`);
 
 // Scene 4
 function scene4() {
-    showText(`Evening outside the saloon. NPC2 reads a notice about an expedition.
+    typeText(`Evening outside the saloon. NPC2 reads a notice about an expedition.
 NPC2: "Player. Your standing on land men like us cleared. Are you riding with us?"`);
 
     showChoices([
@@ -93,7 +107,7 @@ NPC2: "Player. Your standing on land men like us cleared. Are you riding with us
 
 // Scene Battle
 function sceneBattle() {
-    showText(`Dawn. You ride into the hills. Camp found. Firing begins! What do you do?`);
+    typeText(`Dawn. You ride into the hills. Camp found. Firing begins! What do you do?`);
 
     showChoices([
         { text: "Fire at a fleeing figure", action: () => { endGame("The camp is destroyed. You gain bounty but at moral cost."); } },
@@ -104,7 +118,7 @@ function sceneBattle() {
 
 // End Game
 function endGame(message) {
-    showText(`${message}\n\n=== END OF GAME ===`);
+    typeText(`${message}\n\n=== END OF GAME ===`);
     choicesDiv.innerHTML = "";
 }
 

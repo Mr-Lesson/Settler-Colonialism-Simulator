@@ -1,34 +1,54 @@
 body {
-    background-color: #f5f5dc;
-    font-family: "Courier New", monospace;
-    padding: 20px;
+    background-color: #1a1a1a;
+    color: #f2e6c9;
+    font-family: "Georgia", serif;
+    margin: 0;
+    text-align: center;
 }
 
-#game-container {
-    max-width: 800px;
-    margin: auto;
-    background-color: #fff8dc;
-    padding: 20px;
-    border: 2px solid #8b4513;
-    border-radius: 10px;
+#title-screen {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 10px;
 }
 
-#text-output {
-    white-space: pre-line;
-    margin-bottom: 20px;
-}
-
-.choice-btn {
-    display: block;
-    margin: 5px 0;
-    padding: 10px;
-    background-color: #deb887;
+button {
+    background: #b38b4d;
+    color: white;
     border: none;
-    border-radius: 5px;
+    padding: 12px 28px;
+    margin: 6px;
+    font-size: 18px;
     cursor: pointer;
-    font-size: 16px;
+    transition: .3s;
+    border-radius: 4px;
 }
 
-.choice-btn:hover {
-    background-color: #d2a679;
+button:hover {
+    background: #d4aa70;
+}
+
+#game-screen {
+    display: none;
+    margin-top: 40px;
+    width: 70%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#text-box {
+    font-size: 20px;
+    text-align: left;
+    line-height: 1.6;
+    min-height: 200px;
+    padding: 20px;
+    border-left: 4px solid #d4aa70;
+}
+
+#choices button {
+    display: block;
+    margin: 12px auto;
+    width: 60%;
 }
