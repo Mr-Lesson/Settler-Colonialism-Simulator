@@ -24,7 +24,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // =========================
     // PIXEL BACKGROUND
     // =========================
-    function drawPixelBackground() {
+    function drawPixelBackground(scale=4) {
         // Sky
         ctx.fillStyle = "#87ceeb";
         ctx.fillRect(0,0,canvas.width,canvas.height/2);
@@ -33,118 +33,120 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Sun
         ctx.fillStyle = "#FFD700";
-        for (let i=0; i<5; i++){
-            ctx.fillRect(700+i, 80+i, 6,6);
+        for (let i=0; i<8*scale; i+=scale){
+            ctx.fillRect(700+i, 80+i, scale, scale);
         }
 
-        // Hills (distant and middle)
+        // Distant hills
         ctx.fillStyle = "#556B2F";
-        for(let i=0;i<800;i+=10){
-            ctx.fillRect(i, 300 + Math.sin(i/50)*10, 10, 20);
+        for(let i=0;i<canvas.width;i+=scale*2){
+            ctx.fillRect(i, 300 + Math.sin(i/50)*10, scale*2, 20);
         }
+
+        // Middle hills
         ctx.fillStyle = "#228B22";
-        for(let i=0;i<800;i+=10){
-            ctx.fillRect(i, 320 + Math.sin(i/40)*10, 10, 20);
+        for(let i=0;i<canvas.width;i+=scale*2){
+            ctx.fillRect(i, 320 + Math.sin(i/40)*10, scale*2, 20);
         }
 
         // Foreground grass
         ctx.fillStyle="#32CD32";
-        for(let i=0;i<800;i+=4){
-            ctx.fillRect(i,350,4,50);
+        for(let i=0;i<canvas.width;i+=scale){
+            ctx.fillRect(i,350,scale,50);
         }
 
         // River
         ctx.fillStyle="#1E90FF";
-        for(let i=100;i<700;i+=5){
+        for(let i=100;i<700;i+=scale){
             let y = 400 - Math.sin(i/50)*30;
-            ctx.fillRect(i, y, 5, 5);
+            ctx.fillRect(i, y, scale, scale);
         }
     }
 
     // =========================
     // PIXEL CHARACTERS
     // =========================
-    function drawPixelCharacter(x, y, color="blue", hat=false, tool=false, bag=false) {
+    function drawPixelCharacter(x, y, color="blue", hat=false, tool=false, bag=false, scale=6) {
         // Head
         ctx.fillStyle = "#FDD";
-        ctx.fillRect(x, y, 6, 6);
+        ctx.fillRect(x, y, 6*scale, 6*scale);
 
         // Body
         ctx.fillStyle = color;
-        ctx.fillRect(x+2, y+6, 2, 8);
+        ctx.fillRect(x + 2*scale, y + 6*scale, 2*scale, 8*scale);
 
         // Arms
-        ctx.fillRect(x-4, y+6, 4, 2);
-        ctx.fillRect(x+4, y+6, 4, 2);
+        ctx.fillRect(x - 4*scale, y + 6*scale, 4*scale, 2*scale);
+        ctx.fillRect(x + 4*scale, y + 6*scale, 4*scale, 2*scale);
 
         // Legs
-        ctx.fillRect(x, y+14, 2, 4);
-        ctx.fillRect(x+4, y+14, 2, 4);
+        ctx.fillRect(x, y + 14*scale, 2*scale, 4*scale);
+        ctx.fillRect(x + 4*scale, y + 14*scale, 2*scale, 4*scale);
 
         // Hat
         if(hat){
             ctx.fillStyle="#774422";
-            ctx.fillRect(x-1,y-2,8,2);
-            ctx.fillRect(x+2,y-4,2,2);
+            ctx.fillRect(x - 1*scale, y - 2*scale, 8*scale, 2*scale);
+            ctx.fillRect(x + 2*scale, y - 4*scale, 2*scale, 2*scale);
         }
 
         // Tool
         if(tool){
             ctx.fillStyle="#AAAAAA";
-            ctx.fillRect(x+6,y+6,2,1);
-            ctx.fillRect(x+7,y+5,1,2);
+            ctx.fillRect(x + 6*scale, y + 6*scale, 2*scale, 1*scale);
+            ctx.fillRect(x + 7*scale, y + 5*scale, 1*scale, 2*scale);
         }
 
         // Bag
         if(bag){
             ctx.fillStyle="#AA7744";
-            ctx.fillRect(x-2,y+6,2,6);
+            ctx.fillRect(x - 2*scale, y + 6*scale, 2*scale, 6*scale);
         }
     }
 
     // =========================
     // PIXEL BUILDINGS
     // =========================
-    function drawPixelHouse(x, y, w, h){
+    function drawPixelHouse(x, y, w, h, scale=4){
         ctx.fillStyle="#8B4513";
-        for(let i=0;i<w;i+=4){
-            for(let j=0;j<h;j+=4){
-                ctx.fillRect(x+i, y+j, 4,4);
+        for(let i=0;i<w;i+=scale){
+            for(let j=0;j<h;j+=scale){
+                ctx.fillRect(x+i, y+j, scale,scale);
             }
         }
         // Roof
         ctx.fillStyle="#A52A2A";
-        for(let i=0;i<w;i+=4){
-            for(let j=0;j<h/2;j+=4){
-                ctx.fillRect(x+i+j/2, y-j, 4,4);
+        for(let i=0;i<w;i+=scale){
+            for(let j=0;j<h/2;j+=scale){
+                ctx.fillRect(x+i+j/2, y-j, scale,scale);
             }
         }
     }
 
-    function drawPixelTent(x,y){
+    function drawPixelTent(x,y,scale=4){
         ctx.fillStyle="#FF6347";
-        for(let i=0;i<40;i+=4){
-            for(let j=0;j<25;j+=4){
+        for(let i=0;i<40;i+=scale){
+            for(let j=0;j<25;j+=scale){
                 let px = x - 20 + i + j/2;
                 let py = y + j - i/4;
-                ctx.fillRect(px, py, 4,4);
+                ctx.fillRect(px, py, scale,scale);
             }
         }
     }
 
-    function drawPixelTree(x,y){
+    function drawPixelTree(x,y,scale=4){
         ctx.fillStyle="#228B22";
-        for(let i=-20;i<=20;i+=4){
-            for(let j=0;j<=40;j+=4){
+        for(let i=-20;i<=20;i+=scale){
+            for(let j=0;j<=40;j+=scale){
                 if(Math.abs(i)+j/2<20){
-                    ctx.fillRect(x+i, y+j,4,4);
+                    ctx.fillRect(x+i, y+j,scale,scale);
                 }
             }
         }
         ctx.fillStyle="#8B4513";
-        for(let i=0;i<8;i+=4){
-            for(let j=0;j<20;j+=4){
-                ctx.fillRect(x-4+i, y+40+j, 4,4);
+        for(let i=0;i<8;i+=scale){
+            for(let j=0;j<20;j+=scale){
+                ctx.fillRect(x-4+i, y+40+j, scale,scale);
             }
         }
     }
@@ -152,83 +154,80 @@ document.addEventListener("DOMContentLoaded", () => {
     // =========================
     // SCENE VISUALS
     // =========================
-// =========================
-// SCENE VISUALS (PIXEL CHARACTERS)
-// =========================
-const scene1Visual = () => { 
-    clearScene(); 
-    drawPixelBackground(); 
-    drawPixelCharacter(100,260,"#4AC",true,true,true); 
-    drawPixelCharacter(200,260,"#6F4",true,false,true); 
-    drawPixelHouse(400,280,60,60); 
-    drawPixelTree(500,260); 
-}
+    const scene1Visual = () => { 
+        clearScene(); 
+        drawPixelBackground(); 
+        drawPixelCharacter(100,260,"#4AC",true,true,true,6); 
+        drawPixelCharacter(200,260,"#6F4",true,false,true,6); 
+        drawPixelHouse(400,280,60,60); 
+        drawPixelTree(500,260); 
+    }
 
-const scene2Visual = () => { 
-    clearScene(); 
-    drawPixelBackground(); 
-    drawPixelCharacter(90,260,"#4AC",true,true,true); 
-    drawPixelCharacter(180,260,"#B85",true,false,true); 
-    drawPixelHouse(350,280,70,60); 
-    drawPixelTent(550,300); 
-    drawPixelTree(250,270); 
-}
+    const scene2Visual = () => { 
+        clearScene(); 
+        drawPixelBackground(); 
+        drawPixelCharacter(90,260,"#4AC",true,true,true,6); 
+        drawPixelCharacter(180,260,"#B85",true,false,true,6); 
+        drawPixelHouse(350,280,70,60); 
+        drawPixelTent(550,300); 
+        drawPixelTree(250,270); 
+    }
 
-const npc3Visual = () => { 
-    clearScene(); 
-    drawPixelBackground(); 
-    drawPixelCharacter(120,260,"#4AC",true,true,true); 
-    drawPixelCharacter(200,260,"#E96",true,false,true); 
-    drawPixelTree(400,270); 
-    drawPixelTent(600,300); 
-}
+    const npc3Visual = () => { 
+        clearScene(); 
+        drawPixelBackground(); 
+        drawPixelCharacter(120,260,"#4AC",true,true,true,6); 
+        drawPixelCharacter(200,260,"#E96",true,false,true,6); 
+        drawPixelTree(400,270); 
+        drawPixelTent(600,300); 
+    }
 
-const scene3Visual = () => { 
-    clearScene(); 
-    drawPixelBackground(); 
-    drawPixelCharacter(150,260,"#4AC",true,true,true); 
-    drawPixelHouse(400,280,50,50); 
-    drawPixelTree(550,260); 
-    drawPixelTent(600,300); 
-}
+    const scene3Visual = () => { 
+        clearScene(); 
+        drawPixelBackground(); 
+        drawPixelCharacter(150,260,"#4AC",true,true,true,6); 
+        drawPixelHouse(400,280,50,50); 
+        drawPixelTree(550,260); 
+        drawPixelTent(600,300); 
+    }
 
-const saloonVisual = () => { 
-    clearScene(); 
-    drawPixelBackground(); 
-    drawPixelCharacter(130,260,"#4AC",true,true,true); 
-    drawPixelCharacter(210,260,"#B85",true,false,true); 
-    drawPixelHouse(420,280,60,50); 
-    drawPixelTree(580,270); 
-    drawPixelTent(650,300); 
-}
+    const saloonVisual = () => { 
+        clearScene(); 
+        drawPixelBackground(); 
+        drawPixelCharacter(130,260,"#4AC",true,true,true,6); 
+        drawPixelCharacter(210,260,"#B85",true,false,true,6); 
+        drawPixelHouse(420,280,60,50); 
+        drawPixelTree(580,270); 
+        drawPixelTent(650,300); 
+    }
 
-const battleVisual = () => { 
-    clearScene(); 
-    drawPixelBackground(); 
-    drawPixelCharacter(100,260,"#4AC",true,true,true); 
-    drawPixelCharacter(200,260,"#6F4",true,false,true); 
-    drawPixelHouse(450,280,60,60); 
-    drawPixelTree(600,270); 
-    drawPixelTent(650,300); 
-}
+    const battleVisual = () => { 
+        clearScene(); 
+        drawPixelBackground(); 
+        drawPixelCharacter(100,260,"#4AC",true,true,true,6); 
+        drawPixelCharacter(200,260,"#6F4",true,false,true,6); 
+        drawPixelHouse(450,280,60,60); 
+        drawPixelTree(600,270); 
+        drawPixelTent(650,300); 
+    }
 
-const npc4Visual = () => { 
-    clearScene(); 
-    drawPixelBackground(); 
-    drawPixelCharacter(110,260,"#4AC",true,true,true); 
-    drawPixelCharacter(180,260,"#C84",true,false,true); 
-    drawPixelHouse(400,280,60,60); 
-    drawPixelTree(550,270); 
-    drawPixelTent(600,300); 
-}
+    const npc4Visual = () => { 
+        clearScene(); 
+        drawPixelBackground(); 
+        drawPixelCharacter(110,260,"#4AC",true,true,true,6); 
+        drawPixelCharacter(180,260,"#C84",true,false,true,6); 
+        drawPixelHouse(400,280,60,60); 
+        drawPixelTree(550,270); 
+        drawPixelTent(600,300); 
+    }
 
-const finalVisual = () => { 
-    clearScene(); 
-    drawPixelBackground(); 
-    drawPixelCharacter(150,260,"#4AC",true,true,true); 
-    drawPixelTree(500,270); 
-    drawPixelTent(600,300); 
-}
+    const finalVisual = () => { 
+        clearScene(); 
+        drawPixelBackground(); 
+        drawPixelCharacter(150,260,"#4AC",true,true,true,6); 
+        drawPixelTree(500,270); 
+        drawPixelTent(600,300); 
+    }
 
     // =========================
     // START BUTTON
@@ -299,7 +298,6 @@ const finalVisual = () => {
             }
         }
     });
-
     // =========================
     // SCENES
     // =========================
