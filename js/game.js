@@ -66,7 +66,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // =========================
     // PIXEL CHARACTERS (LARGE SCALE)
     // =========================
-    function drawPixelCharacter(x, y, color="blue", hat=false, tool=false, bag=false, scale=16) {
+    function drawPixelCharacter(x, y, color="blue", hat=false, tool=false, bag=false, scale=12) {
         // Head
         ctx.fillStyle = "#FDD";
         ctx.fillRect(x, y, 6*scale, 6*scale);
