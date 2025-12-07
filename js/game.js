@@ -14,16 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
     canvas.width = 800;
     canvas.height = 400;
 
-    let typing = false, skipTyping = false, waitingForEnter = false, nextLineCallback = null;
-
-    // =========================
-    // ANIMATION VARIABLES
-    // =========================
-    let riverOffset = 0;
-    let bobbing = 0, bobDirection = 1;
-    let treeSwing = 0, treeDirection = 1;
-    let animationFrameId = null;
-    let currentSceneVisual = null;
+    let typing=false, skipTyping=false, waitingForEnter=false, nextLineCallback=null;
 
     // =========================
     // CLEAR SCENE
@@ -31,210 +22,170 @@ document.addEventListener("DOMContentLoaded", () => {
     function clearScene() { ctx.clearRect(0,0,canvas.width,canvas.height); }
 
     // =========================
-    // BACKGROUND DRAWING
+    // PIXEL BACKGROUND
     // =========================
-    function drawBackground() {
-        // Sky gradient
-        let sky = ctx.createLinearGradient(0,0,0,canvas.height);
-        sky.addColorStop(0,"#87ceeb"); 
-        sky.addColorStop(1,"#b0e0e6"); 
-        ctx.fillStyle = sky;
-        ctx.fillRect(0,0,canvas.width,canvas.height);
+    function drawPixelBackground() {
+        // Sky
+        ctx.fillStyle = "#87ceeb";
+        ctx.fillRect(0,0,canvas.width,canvas.height/2);
+        ctx.fillStyle = "#b0e0e6";
+        ctx.fillRect(0,canvas.height/2,canvas.width,canvas.height/2);
 
         // Sun
-        ctx.beginPath();
-        ctx.arc(700,80,50,0,Math.PI*2);
-        ctx.fillStyle="#FFD700";
-        ctx.fill();
+        ctx.fillStyle = "#FFD700";
+        for (let i=0; i<5; i++){
+            ctx.fillRect(700+i, 80+i, 6,6);
+        }
 
-        // Distant hills
-        ctx.fillStyle="#556B2F";
-        ctx.beginPath();
-        ctx.moveTo(0,300);
-        ctx.quadraticCurveTo(200,250,400,300);
-        ctx.quadraticCurveTo(600,350,800,300);
-        ctx.lineTo(800,400); ctx.lineTo(0,400); ctx.fill();
-
-        // Middle hills
-        ctx.fillStyle="#228B22";
-        ctx.beginPath();
-        ctx.moveTo(0,320);
-        ctx.quadraticCurveTo(200,270,400,320);
-        ctx.quadraticCurveTo(600,370,800,320);
-        ctx.lineTo(800,400); ctx.lineTo(0,400); ctx.fill();
+        // Hills (distant and middle)
+        ctx.fillStyle = "#556B2F";
+        for(let i=0;i<800;i+=10){
+            ctx.fillRect(i, 300 + Math.sin(i/50)*10, 10, 20);
+        }
+        ctx.fillStyle = "#228B22";
+        for(let i=0;i<800;i+=10){
+            ctx.fillRect(i, 320 + Math.sin(i/40)*10, 10, 20);
+        }
 
         // Foreground grass
         ctx.fillStyle="#32CD32";
-        ctx.fillRect(0,350,800,50);
+        for(let i=0;i<800;i+=4){
+            ctx.fillRect(i,350,4,50);
+        }
 
-        // River (animated)
+        // River
         ctx.fillStyle="#1E90FF";
-        ctx.beginPath();
-        ctx.moveTo(100+Math.sin(riverOffset/20)*10,400);
-        ctx.quadraticCurveTo(200,330+Math.sin(riverOffset/15)*10,350,400);
-        ctx.quadraticCurveTo(500,470+Math.sin(riverOffset/10)*10,700,400);
-        ctx.lineTo(700,400); ctx.lineTo(100,400); ctx.fill();
+        for(let i=100;i<700;i+=5){
+            let y = 400 - Math.sin(i/50)*30;
+            ctx.fillRect(i, y, 5, 5);
+        }
     }
 
     // =========================
-    // STICK FIGURE
+    // PIXEL CHARACTERS
     // =========================
-    function drawStick(x,y,color="white",hat=false,tool=false,bag=false) {
-        ctx.strokeStyle = color;
-        ctx.lineWidth = 2;
+    function drawPixelCharacter(x, y, color="blue", hat=false, tool=false, bag=false) {
         // Head
-        ctx.beginPath(); ctx.arc(x, y, 12,0,Math.PI*2); ctx.stroke();
+        ctx.fillStyle = "#FDD";
+        ctx.fillRect(x, y, 6, 6);
+
+        // Body
+        ctx.fillStyle = color;
+        ctx.fillRect(x+2, y+6, 2, 8);
+
+        // Arms
+        ctx.fillRect(x-4, y+6, 4, 2);
+        ctx.fillRect(x+4, y+6, 4, 2);
+
+        // Legs
+        ctx.fillRect(x, y+14, 2, 4);
+        ctx.fillRect(x+4, y+14, 2, 4);
+
         // Hat
         if(hat){
             ctx.fillStyle="#774422";
-            ctx.beginPath();
-            ctx.moveTo(x-14,y-12);
-            ctx.lineTo(x+14,y-12);
-            ctx.lineTo(x,y-25);
-            ctx.fill();
+            ctx.fillRect(x-1,y-2,8,2);
+            ctx.fillRect(x+2,y-4,2,2);
         }
-        // Body
-        ctx.beginPath(); ctx.moveTo(x,y+12); ctx.lineTo(x,y+50); ctx.stroke();
-        // Arms
-        ctx.beginPath(); ctx.moveTo(x-16,y+25); ctx.lineTo(x+16,y+25); ctx.stroke();
-        if(tool){ ctx.beginPath(); ctx.moveTo(x+16,y+25); ctx.lineTo(x+24,y+15); ctx.stroke(); }
-        if(bag){ ctx.fillStyle="#AA7744"; ctx.fillRect(x-8,y+30,16,18); }
-        // Legs
-        ctx.beginPath(); ctx.moveTo(x,y+50); ctx.lineTo(x-14,y+70); ctx.stroke();
-        ctx.beginPath(); ctx.moveTo(x,y+50); ctx.lineTo(x+14,y+70); ctx.stroke();
+
+        // Tool
+        if(tool){
+            ctx.fillStyle="#AAAAAA";
+            ctx.fillRect(x+6,y+6,2,1);
+            ctx.fillRect(x+7,y+5,1,2);
+        }
+
+        // Bag
+        if(bag){
+            ctx.fillStyle="#AA7744";
+            ctx.fillRect(x-2,y+6,2,6);
+        }
     }
 
     // =========================
-    // BUILDINGS & OBJECTS
+    // PIXEL BUILDINGS
     // =========================
-    function drawHouse(x,y,w,h){
-        ctx.fillStyle="#8B4513"; ctx.fillRect(x,y,w,h);
+    function drawPixelHouse(x, y, w, h){
+        ctx.fillStyle="#8B4513";
+        for(let i=0;i<w;i+=4){
+            for(let j=0;j<h;j+=4){
+                ctx.fillRect(x+i, y+j, 4,4);
+            }
+        }
+        // Roof
         ctx.fillStyle="#A52A2A";
-        ctx.beginPath();
-        ctx.moveTo(x,y); ctx.lineTo(x+w/2,y-h/2); ctx.lineTo(x+w,y); ctx.fill();
+        for(let i=0;i<w;i+=4){
+            for(let j=0;j<h/2;j+=4){
+                ctx.fillRect(x+i+j/2, y-j, 4,4);
+            }
+        }
     }
 
-    function drawTent(x,y){
+    function drawPixelTent(x,y){
         ctx.fillStyle="#FF6347";
-        ctx.beginPath();
-        ctx.moveTo(x,y); ctx.lineTo(x-25,y+60); ctx.lineTo(x+25,y+60);
-        ctx.closePath();
-        ctx.fill();
+        for(let i=0;i<40;i+=4){
+            for(let j=0;j<25;j+=4){
+                let px = x - 20 + i + j/2;
+                let py = y + j - i/4;
+                ctx.fillRect(px, py, 4,4);
+            }
+        }
     }
 
-    function drawTree(x,y){
+    function drawPixelTree(x,y){
         ctx.fillStyle="#228B22";
-        ctx.beginPath();
-        ctx.moveTo(x+treeSwing, y); ctx.lineTo(x-20+treeSwing, y+40); ctx.lineTo(x+20+treeSwing, y+40);
-        ctx.closePath(); ctx.fill();
-        ctx.fillStyle="#8B4513"; ctx.fillRect(x-4, y+40, 8, 20);
+        for(let i=-20;i<=20;i+=4){
+            for(let j=0;j<=40;j+=4){
+                if(Math.abs(i)+j/2<20){
+                    ctx.fillRect(x+i, y+j,4,4);
+                }
+            }
+        }
+        ctx.fillStyle="#8B4513";
+        for(let i=0;i<8;i+=4){
+            for(let j=0;j<20;j+=4){
+                ctx.fillRect(x-4+i, y+40+j, 4,4);
+            }
+        }
     }
 
     // =========================
     // SCENE VISUALS
     // =========================
-    const scene1Visual = () => { 
-        drawStick(100,260,"#4AC",true,true,true);
-        drawStick(200,260,"#6F4",true,false,true);
-        drawHouse(400,280,60,60); 
-        drawTree(500,260); 
-    };
-    const scene2Visual = () => {
-        drawStick(90,260,"#4AC",true,true,true);
-        drawStick(180,260,"#B85",true,false,true);
-        drawHouse(350,280,70,60);
-        drawTent(550,300);
-        drawTree(250,270);
-    };
-    const npc3Visual = () => {
-        drawStick(120,260,"#4AC",true,true,true);
-        drawStick(200,260,"#E96",true,false,true);
-        drawTree(400,270);
-        drawTent(600,300);
-    };
-    const scene3Visual = () => {
-        drawStick(150,260,"#4AC",true,true,true);
-        drawHouse(400,280,50,50);
-        drawTree(550,260);
-        drawTent(600,300);
-    };
-    const saloonVisual = () => {
-        drawStick(130,260,"#4AC",true,true,true);
-        drawStick(210,260,"#B85",true,false,true);
-        drawHouse(420,280,60,50);
-        drawTree(580,270);
-        drawTent(650,300);
-    };
-    const battleVisual = () => {
-        drawStick(100,260,"#4AC",true,true,true);
-        drawStick(200,260,"#6F4",true,false,true);
-        drawHouse(450,280,60,60);
-        drawTree(600,270);
-        drawTent(650,300);
-    };
-    const npc4Visual = () => {
-        drawStick(110,260,"#4AC",true,true,true);
-        drawStick(180,260,"#C84",true,false,true);
-        drawHouse(400,280,60,60);
-        drawTree(550,270);
-        drawTent(600,300);
-    };
-    const finalVisual = () => {
-        drawStick(150,260,"#4AC",true,true,true);
-        drawTree(500,270);
-        drawTent(600,300);
-    };
-
-    // =========================
-    // ANIMATION LOOP
-    // =========================
-    function animateScene() {
-        clearScene();
-        drawBackground();
-        if(currentSceneVisual) currentSceneVisual();
-        
-        // update offsets for animations
-        riverOffset += 1;
-        if(riverOffset > 100) riverOffset = 0;
-
-        if(bobDirection === 1) bobbing += 0.2; else bobbing -= 0.2;
-        if(bobbing > 4 || bobbing < -4) bobDirection *= -1;
-
-        treeSwing += treeDirection * 0.2;
-        if(treeSwing > 3 || treeSwing < -3) treeDirection *= -1;
-
-        animationFrameId = requestAnimationFrame(animateScene);
-    }
-
-    function switchScene(newVisual) { currentSceneVisual = newVisual; }
+    const scene1Visual = () => { clearScene(); drawPixelBackground(); drawPixelCharacter(100,260,"#4AC",true,true,true); drawPixelCharacter(200,260,"#6F4",true,false,true); drawPixelHouse(400,280,60,60); drawPixelTree(500,260); }
+    const scene2Visual = () => { clearScene(); drawPixelBackground(); drawPixelCharacter(90,260,"#4AC",true,true,true); drawPixelCharacter(180,260,"#B85",true,false,true); drawPixelHouse(350,280,70,60); drawPixelTent(550,300); drawPixelTree(250,270); }
+    const npc3Visual = () => { clearScene(); drawPixelBackground(); drawPixelCharacter(120,260,"#4AC",true,true,true); drawPixelCharacter(200,260,"#E96",true,false,true); drawPixelTree(400,270); drawPixelTent(600,300); }
+    const scene3Visual = () => { clearScene(); drawPixelBackground(); drawPixelCharacter(150,260,"#4AC",true,true,true); drawPixelHouse(400,280,50,50); drawPixelTree(550,260); drawPixelTent(600,300); }
+    const saloonVisual = () => { clearScene(); drawPixelBackground(); drawPixelCharacter(130,260,"#4AC",true,true,true); drawPixelCharacter(210,260,"#B85",true,false,true); drawPixelHouse(420,280,60,50); drawPixelTree(580,270); drawPixelTent(650,300); }
+    const battleVisual = () => { clearScene(); drawPixelBackground(); drawPixelCharacter(100,260,"#4AC",true,true,true); drawPixelCharacter(200,260,"#6F4",true,false,true); drawPixelHouse(450,280,60,60); drawPixelTree(600,270); drawPixelTent(650,300); }
+    const npc4Visual = () => { clearScene(); drawPixelBackground(); drawPixelCharacter(110,260,"#4AC",true,true,true); drawPixelCharacter(180,260,"#C84",true,false,true); drawPixelHouse(400,280,60,60); drawPixelTree(550,270); drawPixelTent(600,300); }
+    const finalVisual = () => { clearScene(); drawPixelBackground(); drawPixelCharacter(150,260,"#4AC",true,true,true); drawPixelTree(500,270); drawPixelTent(600,300); }
 
     // =========================
     // START BUTTON
     // =========================
     startBtn.addEventListener("click", () => {
-        titleScreen.style.display = "none";
-        gameScreen.style.display = "block";
+        titleScreen.style.display="none";
+        gameScreen.style.display="block";
         showSkipHint();
-        switchScene(scene1Visual);
-        animateScene();
         scene1();
     });
 
     // =========================
     // TYPEWRITER
     // =========================
-    function typeText(text, onComplete) {
-        typing = true; skipTyping = false; waitingForEnter = false;
-        textBox.innerHTML = "";
+    function typeText(text, onComplete){
+        typing=true; skipTyping=false; waitingForEnter=false;
+        textBox.innerHTML="";
         hideChoices();
         showSkipHint();
-        let i = 0, speed = 28;
-        function step() {
-            if(skipTyping) { textBox.innerHTML=text; finish(); return; }
-            if(i<text.length){ textBox.innerHTML += text.charAt(i); i++; setTimeout(step,speed); }
+        let i=0, speed=28;
+        function step(){
+            if(skipTyping){ textBox.innerHTML=text; finish(); return; }
+            if(i<text.length){ textBox.innerHTML+=text.charAt(i); i++; setTimeout(step,speed); }
             else finish();
         }
-        function finish() { typing=false; waitingForEnter=true; nextLineCallback=onComplete; }
+        function finish(){ typing=false; waitingForEnter=true; nextLineCallback=onComplete; }
         step();
     }
 
@@ -244,9 +195,9 @@ document.addEventListener("DOMContentLoaded", () => {
     function showChoices(list){
         choicesDiv.innerHTML=""; hideSkipHint(); waitingForEnter=false;
         list.forEach(c=>{
-            const btn = document.createElement("button");
-            btn.textContent = c.text;
-            btn.onclick = () => typeText(c.response,()=>c.action());
+            const btn=document.createElement("button");
+            btn.textContent=c.text;
+            btn.onclick=()=>typeText(c.response,()=>c.action());
             choicesDiv.appendChild(btn);
         });
     }
@@ -259,8 +210,8 @@ document.addEventListener("DOMContentLoaded", () => {
     skipHint.style.color="#d4aa70";
     skipHint.style.fontSize="13px";
     skipHint.style.marginTop="8px";
-    skipHint.innerText = "Press ENTER to continue";
-    skipHint.style.display = "none";
+    skipHint.innerText="Press ENTER to continue";
+    skipHint.style.display="none";
     gameScreen.appendChild(skipHint);
     function showSkipHint(){ skipHint.style.display="block"; }
     function hideSkipHint(){ skipHint.style.display="none"; }
@@ -270,11 +221,11 @@ document.addEventListener("DOMContentLoaded", () => {
     // =========================
     document.addEventListener("keydown", e=>{
         if(e.key==="Enter"){
-            if(typing) skipTyping = true;
+            if(typing) skipTyping=true;
             else if(waitingForEnter && nextLineCallback){
-                let fn = nextLineCallback;
-                nextLineCallback = null;
-                waitingForEnter = false;
+                let fn=nextLineCallback;
+                nextLineCallback=null;
+                waitingForEnter=false;
                 fn();
             }
         }
