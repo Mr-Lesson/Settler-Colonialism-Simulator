@@ -34,54 +34,98 @@ function clearScene() {
 function drawPixelBackground() {
     clearScene();
 
-    // SKY
+    // Sky gradient
     ctx.fillStyle = "#87ceeb";
     ctx.fillRect(0, 0, canvas.width, canvas.height / 2);
     ctx.fillStyle = "#b0e0e6";
     ctx.fillRect(0, canvas.height / 2, canvas.width, canvas.height / 2);
 
-    // SUN
+    // Sun
     ctx.fillStyle = "#FFD700";
-    ctx.fillRect(700, 50, 12, 12);
+    ctx.fillRect(700, 60, 12, 12);
 
-    // DISTANT HILLS
+    // Hills (background)
     ctx.fillStyle = "#556B2F";
     for (let i = 0; i < canvas.width; i += 6) {
-        ctx.fillRect(i, 220 + Math.sin(i / 40) * 12, 6, 25);
+        ctx.fillRect(i, 230 + Math.sin(i / 50) * 10, 6, 20);
     }
 
-    // MIDDLE HILLS
+    // Hills (midground)
     ctx.fillStyle = "#228B22";
     for (let i = 0; i < canvas.width; i += 6) {
-        ctx.fillRect(i, 250 + Math.sin(i / 30) * 12, 6, 25);
+        ctx.fillRect(i, 270 + Math.sin(i / 40) * 8, 6, 15);
     }
 
-    // PATHWAYS (winding)
+    // Path (curvy trail)
     ctx.fillStyle = "#D2B48C";
-    for (let x = 0; x < canvas.width; x += 3) {
-        let y = 350 + Math.sin(x / 30) * 6 + Math.sin(x / 15) * 4;
-        ctx.fillRect(x, y, 3, 6);
+    for (let i = 0; i < canvas.width; i += 4) {
+        let y = 320 + Math.sin(i / 60) * 12 + Math.cos(i / 30) * 6;
+        ctx.fillRect(i, y, 4, 6);
     }
 
-    // SMALLER TRAILS
-    ctx.fillStyle = "#C19A6B";
-    for (let x = 0; x < canvas.width; x += 10) {
-        let y = 360 + Math.sin(x / 20) * 4;
-        ctx.fillRect(x, y, 2, 4);
+    // River (meandering)
+    ctx.fillStyle = "#1E90FF";
+    for (let i = 120; i < 700; i += 4) {
+        let y = 360 - Math.sin(i / 50) * 20 + Math.cos(i / 70) * 5;
+        ctx.fillRect(i, y, 4, 4);
     }
 
-    // FOREGROUND GRASS
+    // Foreground grass
     ctx.fillStyle = "#32CD32";
     ctx.fillRect(0, 360, canvas.width, 40);
 
-    // RIVER (wavy)
-    ctx.fillStyle = "#1E90FF";
-    for (let i = 100; i < 700; i += 4) {
-        let y = 400 - Math.sin(i / 40) * 25 - Math.sin(i / 20) * 10;
-        ctx.fillRect(i, y, 4, 4);
+    // Scattered small trees (foreground)
+    drawPixelTree(80, 300, 3);
+    drawPixelTree(650, 310, 4);
+    drawPixelTree(500, 320, 3);
+}
+
+// -------------------------
+// FIXED OBJECT PLACEMENT
+// -------------------------
+function drawPixelHouse(x, y, w = 35, h = 35, scale = 3) {
+    ctx.fillStyle = "#8B4513";
+    for (let i = 0; i < w; i += scale) {
+        for (let j = 0; j < h; j += scale) {
+            ctx.fillRect(x + i, y + j, scale, scale);
+        }
+    }
+    // Roof
+    ctx.fillStyle = "#A52A2A";
+    for (let i = 0; i < w; i += scale) {
+        for (let j = 0; j < h / 2; j += scale) {
+            ctx.fillRect(x + i + j / 2, y - j, scale, scale);
+        }
     }
 }
 
+function drawPixelTent(x, y, scale = 25) {
+    ctx.fillStyle = "#FF6347";
+    for (let i = 0; i < scale; i += 3) {
+        for (let j = 0; j < scale; j += 3) {
+            let px = x - scale / 2 + i + j / 2;
+            let py = y + j - i / 3;
+            ctx.fillRect(px, py, 3, 3);
+        }
+    }
+}
+
+function drawPixelTree(x, y, scale = 5) {
+    ctx.fillStyle = "#228B22";
+    for (let i = -scale * 2; i <= scale * 2; i += 2) {
+        for (let j = 0; j <= scale * 8; j += 2) {
+            if (Math.abs(i) + j / 2 < scale * 2) {
+                ctx.fillRect(x + i, y + j, 2, 2);
+            }
+        }
+    }
+    ctx.fillStyle = "#8B4513";
+    for (let i = 0; i < scale * 2; i += 2) {
+        for (let j = 0; j < scale * 4; j += 2) {
+            ctx.fillRect(x - 2 + i, y + scale * 8 + j, 2, 2);
+        }
+    }
+}
 // ==========================
 // PIXEL CHARACTERS
 // ==========================
@@ -123,52 +167,6 @@ function drawPixelCharacter(x, y, color="blue", hat=false, tool=false, bag=false
     }
 }
 
-// ==========================
-// PIXEL BUILDINGS / TREES / TENTS
-// ==========================
-function drawPixelHouse(x, y, w=35, h=35, scale=3){
-    ctx.fillStyle="#8B4513";
-    for(let i=0;i<w;i+=scale){
-        for(let j=0;j<h;j+=scale){
-            ctx.fillRect(x+i, y+j, scale, scale);
-        }
-    }
-    // ROOF
-    ctx.fillStyle="#A52A2A";
-    for(let i=0;i<w;i+=scale){
-        for(let j=0;j<h/2;j+=scale){
-            ctx.fillRect(x + i + j/2, y - j, scale, scale);
-        }
-    }
-}
-
-function drawPixelTent(x, y, scale=25){
-    ctx.fillStyle="#FF6347";
-    for(let i=0;i<scale;i+=3){
-        for(let j=0;j<scale;j+=3){
-            let px = x - scale/2 + i + j/2;
-            let py = y + j - i/3;
-            ctx.fillRect(px, py, 3,3);
-        }
-    }
-}
-
-function drawPixelTree(x, y, scale=5){
-    ctx.fillStyle="#228B22";
-    for(let i=-scale*2;i<=scale*2;i+=2){
-        for(let j=0;j<=scale*8;j+=2){
-            if(Math.abs(i) + j/2 < scale*2){
-                ctx.fillRect(x+i, y+j, 2,2);
-            }
-        }
-    }
-    ctx.fillStyle="#8B4513"; // trunk
-    for(let i=0;i<scale*2;i+=2){
-        for(let j=0;j<scale*4;j+=2){
-            ctx.fillRect(x-2+i, y + scale*8 + j, 2, 2);
-        }
-    }
-}
 
 // ==========================
 // SCENE VISUALS
