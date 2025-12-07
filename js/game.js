@@ -152,14 +152,83 @@ document.addEventListener("DOMContentLoaded", () => {
     // =========================
     // SCENE VISUALS
     // =========================
-    const scene1Visual = () => { clearScene(); drawPixelBackground(); drawPixelCharacter(100,260,"#4AC",true,true,true); drawPixelCharacter(200,260,"#6F4",true,false,true); drawPixelHouse(400,280,60,60); drawPixelTree(500,260); }
-    const scene2Visual = () => { clearScene(); drawPixelBackground(); drawPixelCharacter(90,260,"#4AC",true,true,true); drawPixelCharacter(180,260,"#B85",true,false,true); drawPixelHouse(350,280,70,60); drawPixelTent(550,300); drawPixelTree(250,270); }
-    const npc3Visual = () => { clearScene(); drawPixelBackground(); drawPixelCharacter(120,260,"#4AC",true,true,true); drawPixelCharacter(200,260,"#E96",true,false,true); drawPixelTree(400,270); drawPixelTent(600,300); }
-    const scene3Visual = () => { clearScene(); drawPixelBackground(); drawPixelCharacter(150,260,"#4AC",true,true,true); drawPixelHouse(400,280,50,50); drawPixelTree(550,260); drawPixelTent(600,300); }
-    const saloonVisual = () => { clearScene(); drawPixelBackground(); drawPixelCharacter(130,260,"#4AC",true,true,true); drawPixelCharacter(210,260,"#B85",true,false,true); drawPixelHouse(420,280,60,50); drawPixelTree(580,270); drawPixelTent(650,300); }
-    const battleVisual = () => { clearScene(); drawPixelBackground(); drawPixelCharacter(100,260,"#4AC",true,true,true); drawPixelCharacter(200,260,"#6F4",true,false,true); drawPixelHouse(450,280,60,60); drawPixelTree(600,270); drawPixelTent(650,300); }
-    const npc4Visual = () => { clearScene(); drawPixelBackground(); drawPixelCharacter(110,260,"#4AC",true,true,true); drawPixelCharacter(180,260,"#C84",true,false,true); drawPixelHouse(400,280,60,60); drawPixelTree(550,270); drawPixelTent(600,300); }
-    const finalVisual = () => { clearScene(); drawPixelBackground(); drawPixelCharacter(150,260,"#4AC",true,true,true); drawPixelTree(500,270); drawPixelTent(600,300); }
+// =========================
+// SCENE VISUALS (PIXEL CHARACTERS)
+// =========================
+const scene1Visual = () => { 
+    clearScene(); 
+    drawPixelBackground(); 
+    drawPixelCharacter(100,260,"#4AC",true,true,true); 
+    drawPixelCharacter(200,260,"#6F4",true,false,true); 
+    drawPixelHouse(400,280,60,60); 
+    drawPixelTree(500,260); 
+}
+
+const scene2Visual = () => { 
+    clearScene(); 
+    drawPixelBackground(); 
+    drawPixelCharacter(90,260,"#4AC",true,true,true); 
+    drawPixelCharacter(180,260,"#B85",true,false,true); 
+    drawPixelHouse(350,280,70,60); 
+    drawPixelTent(550,300); 
+    drawPixelTree(250,270); 
+}
+
+const npc3Visual = () => { 
+    clearScene(); 
+    drawPixelBackground(); 
+    drawPixelCharacter(120,260,"#4AC",true,true,true); 
+    drawPixelCharacter(200,260,"#E96",true,false,true); 
+    drawPixelTree(400,270); 
+    drawPixelTent(600,300); 
+}
+
+const scene3Visual = () => { 
+    clearScene(); 
+    drawPixelBackground(); 
+    drawPixelCharacter(150,260,"#4AC",true,true,true); 
+    drawPixelHouse(400,280,50,50); 
+    drawPixelTree(550,260); 
+    drawPixelTent(600,300); 
+}
+
+const saloonVisual = () => { 
+    clearScene(); 
+    drawPixelBackground(); 
+    drawPixelCharacter(130,260,"#4AC",true,true,true); 
+    drawPixelCharacter(210,260,"#B85",true,false,true); 
+    drawPixelHouse(420,280,60,50); 
+    drawPixelTree(580,270); 
+    drawPixelTent(650,300); 
+}
+
+const battleVisual = () => { 
+    clearScene(); 
+    drawPixelBackground(); 
+    drawPixelCharacter(100,260,"#4AC",true,true,true); 
+    drawPixelCharacter(200,260,"#6F4",true,false,true); 
+    drawPixelHouse(450,280,60,60); 
+    drawPixelTree(600,270); 
+    drawPixelTent(650,300); 
+}
+
+const npc4Visual = () => { 
+    clearScene(); 
+    drawPixelBackground(); 
+    drawPixelCharacter(110,260,"#4AC",true,true,true); 
+    drawPixelCharacter(180,260,"#C84",true,false,true); 
+    drawPixelHouse(400,280,60,60); 
+    drawPixelTree(550,270); 
+    drawPixelTent(600,300); 
+}
+
+const finalVisual = () => { 
+    clearScene(); 
+    drawPixelBackground(); 
+    drawPixelCharacter(150,260,"#4AC",true,true,true); 
+    drawPixelTree(500,270); 
+    drawPixelTent(600,300); 
+}
 
     // =========================
     // START BUTTON
