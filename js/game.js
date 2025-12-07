@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", () => {
 // ==========================
 // CHARACTER SIZE
 // ==========================
-const CHAR_SIZE = 8; // small, proportionate
+const CHAR_SIZE = 16; // better visibility
 
 // ==========================
 // CLEAR SCENE
@@ -126,44 +126,52 @@ function drawPixelTree(x, y, scale = 5) {
         }
     }
 }
+
 // ==========================
 // PIXEL CHARACTERS
 // ==========================
 function drawPixelCharacter(x, y, color="blue", hat=false, tool=false, bag=false, size=CHAR_SIZE) {
+    const pixel = size / 8; // base pixel unit
+    
     // HEAD
-    ctx.fillStyle = "#FDD";
-    ctx.fillRect(x, y, size, size);
+    ctx.fillStyle = "#FDDCC5";
+    ctx.fillRect(x + pixel * 2, y, pixel * 4, pixel * 4);
 
     // BODY
     ctx.fillStyle = color;
-    ctx.fillRect(x + size / 4, y + size, size / 2, size);
+    ctx.fillRect(x + pixel * 2, y + pixel * 4, pixel * 4, pixel * 5);
 
     // ARMS
-    ctx.fillRect(x - size / 2, y + size, size / 2, size / 4);
-    ctx.fillRect(x + size, y + size, size / 2, size / 4);
+    ctx.fillStyle = color;
+    ctx.fillRect(x, y + pixel * 4, pixel * 2, pixel * 4);
+    ctx.fillRect(x + pixel * 6, y + pixel * 4, pixel * 2, pixel * 4);
 
     // LEGS
-    ctx.fillRect(x, y + size * 2, size / 4, size);
-    ctx.fillRect(x + size * 3/4, y + size * 2, size / 4, size);
+    ctx.fillRect(x + pixel * 2, y + pixel * 9, pixel * 2, pixel * 5);
+    ctx.fillRect(x + pixel * 4, y + pixel * 9, pixel * 2, pixel * 5);
 
     // HAT
     if(hat){
-        ctx.fillStyle="#774422";
-        ctx.fillRect(x - 1, y - 2, size + 2, 2);
-        ctx.fillRect(x + size/2 -1, y - size/2, 2, 2);
+        ctx.fillStyle = "#8B4513";
+        ctx.fillRect(x + pixel, y - pixel, pixel * 6, pixel * 2);
+        ctx.fillStyle = "#654321";
+        ctx.fillRect(x + pixel * 2, y - pixel * 2, pixel * 4, pixel);
     }
 
-    // TOOL
+    // TOOL (pickaxe)
     if(tool){
-        ctx.fillStyle="#AAAAAA";
-        ctx.fillRect(x + size, y + size, 2, 1);
-        ctx.fillRect(x + size + 1, y + size - 1, 1, 2);
+        ctx.fillStyle = "#8B4513";
+        ctx.fillRect(x + pixel * 7, y + pixel * 6, pixel, pixel * 3);
+        ctx.fillStyle = "#778899";
+        ctx.fillRect(x + pixel * 6, y + pixel * 5, pixel * 3, pixel);
     }
 
     // BAG
     if(bag){
-        ctx.fillStyle="#AA7744";
-        ctx.fillRect(x - 2, y + size, 2, size);
+        ctx.fillStyle = "#8B6F47";
+        ctx.fillRect(x + pixel, y + pixel * 5, pixel, pixel * 3);
+        ctx.fillStyle = "#6B5735";
+        ctx.fillRect(x + pixel, y + pixel * 5, pixel, pixel);
     }
 }
 
@@ -175,7 +183,7 @@ const scene1Visual = () => {
     drawPixelBackground();
     // Characters
     drawPixelCharacter(150, 270,"#4AC", true, true, true, CHAR_SIZE);
-    drawPixelCharacter(250, 270,"#6F4", true, false, true, CHAR_SIZE);
+    drawPixelCharacter(270, 270,"#6F4", true, false, true, CHAR_SIZE);
     // Buildings
     drawPixelHouse(500, 260, 35, 35, 3);
     // Trees
@@ -186,7 +194,7 @@ const scene1Visual = () => {
 const scene2Visual = () => {
     drawPixelBackground();
     drawPixelCharacter(130, 270,"#4AC", true, true, true, CHAR_SIZE);
-    drawPixelCharacter(280, 270,"#B85", true, false, true, CHAR_SIZE);
+    drawPixelCharacter(300, 270,"#B85", true, false, true, CHAR_SIZE);
     drawPixelHouse(450, 260, 35, 35, 3);
     drawPixelTent(600, 260, 25);
     drawPixelTree(350, 270, 4);
@@ -196,7 +204,7 @@ const scene2Visual = () => {
 const npc3Visual = () => {
     drawPixelBackground();
     drawPixelCharacter(160, 270,"#4AC", true, true, true, CHAR_SIZE);
-    drawPixelCharacter(260, 270,"#E96", true, false, true, CHAR_SIZE);
+    drawPixelCharacter(280, 270,"#E96", true, false, true, CHAR_SIZE);
     drawPixelTent(600, 260, 25);
     drawPixelTree(400, 270, 4);
     drawPixelTree(700, 270, 4);
@@ -214,27 +222,31 @@ const scene3Visual = () => {
 const scene4NormalVisual = () => {
     drawPixelBackground();
     drawPixelCharacter(140, 270,"#4AC", true, true, true, CHAR_SIZE);
-    drawPixelCharacter(220, 270,"#B85", true, false, true, CHAR_SIZE);
+    drawPixelCharacter(260, 270,"#B85", true, false, true, CHAR_SIZE);
     drawPixelHouse(420, 260, 35, 35, 3);
     drawPixelTree(580, 270, 4);
     drawPixelTent(650, 260, 25);
     drawPixelTree(700, 270, 4);
 };
 
+const saloonVisual = scene4NormalVisual;
+
 const scene4NPC1FollowupVisual = () => {
     drawPixelBackground();
     drawPixelCharacter(110, 270,"#4AC", true, true, true, CHAR_SIZE);
-    drawPixelCharacter(180, 270,"#C84", true, false, true, CHAR_SIZE);
+    drawPixelCharacter(230, 270,"#C84", true, false, true, CHAR_SIZE);
     drawPixelHouse(400, 260, 35, 35, 3);
     drawPixelTree(550, 270, 4);
     drawPixelTent(600, 260, 25);
     drawPixelTree(700, 270, 4);
 };
 
+const npc4Visual = scene4NPC1FollowupVisual;
+
 const battleVisual = () => {
     drawPixelBackground();
     drawPixelCharacter(120, 270,"#4AC", true, true, true, CHAR_SIZE);
-    drawPixelCharacter(200, 270,"#6F4", true, false, true, CHAR_SIZE);
+    drawPixelCharacter(240, 270,"#6F4", true, false, true, CHAR_SIZE);
     drawPixelHouse(450, 260, 35, 35, 3);
     drawPixelTree(600, 270, 4);
     drawPixelTent(650, 260, 25);
@@ -260,7 +272,7 @@ const finalVisual = () => {
     });
 
     // =========================
-    // TYPEWRITER & CHOICES (keep same)
+    // TYPEWRITER & CHOICES
     // =========================
     function typeText(text, onComplete){
         typing=true; skipTyping=false; waitingForEnter=false;
@@ -309,6 +321,15 @@ const finalVisual = () => {
             }
         }
     });
+
+    function endGame(message) {
+        typeText(message, () => {
+            setTimeout(() => {
+                textBox.innerHTML += "<br><br><strong>Thank you for playing!</strong>";
+            }, 1000);
+        });
+    }
+
     // =========================
     // SCENES
     // =========================
