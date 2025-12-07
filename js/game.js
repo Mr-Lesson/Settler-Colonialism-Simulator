@@ -1,3 +1,4 @@
+document.addEventListener("DOMContentLoaded", () => {
 // =========================
 // ELEMENTS
 // =========================
@@ -49,15 +50,13 @@ function hideSkipHint() { skipHint.style.display = "none"; }
 // =========================
 // START GAME
 // =========================
-startBtn.addEventListener("click", () => {
-    if (!titleScreen || !gameScreen) return;
-    titleScreen.style.display = "none";
-    gameScreen.style.display = "block";
-
-    clearCanvas(); // clear canvas for first scene
-    showSkipHint();
-    // start your first scene here, e.g. scene1();
-});
+    startBtn.addEventListener("click", () => {
+        titleScreen.style.display = "none";
+        gameScreen.style.display = "block";
+        clearCanvas(); // clear canvas for first scene
+        showSkipHint();
+        scene1(); // Start your first scene
+    });
 
 // =========================
 // TYPEWRITER TEXT
