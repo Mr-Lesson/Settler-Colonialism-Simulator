@@ -102,74 +102,108 @@ document.addEventListener("keydown",e=>{
 });
 
 // =========================
-// DRAWING FUNCTIONS
+// DRAWING FUNCTIONS (Cartoonish)
 // =========================
-function drawValley(){
-    // Ground
-    ctx.fillStyle="#0b3";
-    ctx.fillRect(0, 320, canvas.width, 80);
-    // Hills
-    ctx.fillStyle="#064";
+function drawBackground(){
+    // Sky gradient
+    let sky = ctx.createLinearGradient(0,0,0,canvas.height);
+    sky.addColorStop(0,"#87ceeb");
+    sky.addColorStop(1,"#d4f0ff");
+    ctx.fillStyle = sky;
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+
+    // Sun
     ctx.beginPath();
-    ctx.moveTo(0, 320);
-    ctx.quadraticCurveTo(150, 200, 400, 320);
-    ctx.quadraticCurveTo(650, 250, 800, 320);
+    ctx.arc(700,80,40,0,Math.PI*2);
+    ctx.fillStyle="#FFD700";
+    ctx.fill();
+
+    // Rolling hills
+    ctx.fillStyle="#228B22";
+    ctx.beginPath();
+    ctx.moveTo(0,300);
+    ctx.quadraticCurveTo(200,250,400,300);
+    ctx.quadraticCurveTo(600,350,800,300);
+    ctx.lineTo(800,400); ctx.lineTo(0,400);
+    ctx.fill();
+
+    ctx.fillStyle="#2E8B57";
+    ctx.beginPath();
+    ctx.moveTo(0,330);
+    ctx.quadraticCurveTo(200,280,400,330);
+    ctx.quadraticCurveTo(600,380,800,330);
+    ctx.lineTo(800,400); ctx.lineTo(0,400);
     ctx.fill();
 }
-function drawStick(x,y,color="white",hat=false,tool=false){
+
+function drawStick(x,y,color="white",hat=false,tool=false,bag=false){
     ctx.strokeStyle=color;
     ctx.lineWidth=2;
     // Head
     ctx.beginPath(); ctx.arc(x,y,10,0,Math.PI*2); ctx.stroke();
-    if(hat){ ctx.fillStyle="#774"; ctx.beginPath(); ctx.moveTo(x-10,y-10); ctx.lineTo(x+10,y-10); ctx.lineTo(x,y-20); ctx.fill(); }
+    // Hat
+    if(hat){ ctx.fillStyle="#774"; ctx.beginPath(); ctx.moveTo(x-12,y-10); ctx.lineTo(x+12,y-10); ctx.lineTo(x,y-20); ctx.fill(); }
     // Body
     ctx.beginPath(); ctx.moveTo(x,y+10); ctx.lineTo(x,y+40); ctx.stroke();
     // Arms
     ctx.beginPath(); ctx.moveTo(x-12,y+20); ctx.lineTo(x+12,y+20); ctx.stroke();
-    if(tool){ ctx.beginPath(); ctx.moveTo(x+12,y+20); ctx.lineTo(x+20,y+10); ctx.stroke(); } // example pickaxe
+    if(tool){ ctx.beginPath(); ctx.moveTo(x+12,y+20); ctx.lineTo(x+20,y+10); ctx.stroke(); }
+    if(bag){ ctx.fillStyle="#aa7744"; ctx.fillRect(x-7,y+25,14,15); }
     // Legs
     ctx.beginPath(); ctx.moveTo(x,y+40); ctx.lineTo(x-12,y+60); ctx.stroke();
     ctx.beginPath(); ctx.moveTo(x,y+40); ctx.lineTo(x+12,y+60); ctx.stroke();
 }
-function drawHouse(x,y,w,h){
-    // Walls
-    ctx.fillStyle="#653";
+
+function drawHouse(x,y,w,h,type="house"){
+    ctx.fillStyle = (type==="house") ? "#8B4513" : "#CD853F";
     ctx.fillRect(x,y,w,h);
     // Roof
-    ctx.fillStyle="#922";
+    ctx.fillStyle="#A52A2A";
     ctx.beginPath();
     ctx.moveTo(x,y);
     ctx.lineTo(x+w/2, y-h/2);
     ctx.lineTo(x+w,y);
     ctx.closePath();
     ctx.fill();
-    // Chimney
-    ctx.fillStyle="#741";
-    ctx.fillRect(x+w*0.7, y-h/2-10, 6, 15);
+    if(type==="house"){
+        ctx.fillStyle="#654321";
+        ctx.fillRect(x+w*0.7, y-h/2-10, 6, 15); // chimney
+    }
 }
+
 function drawTree(x,y){
-    ctx.fillStyle="#4a2";
+    ctx.fillStyle="#228B22";
     ctx.beginPath();
     ctx.moveTo(x,y);
     ctx.lineTo(x-15,y+30);
     ctx.lineTo(x+15,y+30);
     ctx.closePath();
     ctx.fill();
-    ctx.fillStyle="#532";
+    ctx.fillStyle="#8B4513";
     ctx.fillRect(x-3,y+30,6,15);
+}
+
+function drawTent(x,y){
+    ctx.fillStyle="#FF6347";
+    ctx.beginPath();
+    ctx.moveTo(x,y);
+    ctx.lineTo(x-20,y+40);
+    ctx.lineTo(x+20,y+40);
+    ctx.closePath();
+    ctx.fill();
 }
 
 // =========================
 // SCENE VISUALS
 // =========================
-const scene1Visual = () => { clearScene(); drawValley(); drawStick(90,260,"#4ac",true,true); drawStick(150,260,"#6f4",true); drawHouse(300,290,60,60); drawTree(350,280); }
-const scene2Visual = () => { clearScene(); drawValley(); drawStick(90,260,"#4ac",true,true); drawStick(160,260,"#b85",true); drawHouse(260,285,70,60); drawTree(200,270); }
-const npc3Visual = () => { clearScene(); drawValley(); drawStick(90,260,"#4ac",true,true); drawStick(150,260,"#e96",true); drawTree(400,270); }
-const scene3Visual = () => { clearScene(); drawValley(); drawStick(120,260,"#4ac",true,true); drawHouse(310,290,50,50); drawTree(360,280); }
-const saloonVisual = () => { clearScene(); drawValley(); drawStick(110,260,"#4ac",true,true); drawStick(180,260,"#b85",true); drawHouse(330,285,50,50); drawTree(380,280); }
-const battleVisual = () => { clearScene(); drawValley(); drawStick(90,260,"#4ac",true,true); drawStick(170,260,"#6f4",true); drawHouse(320,285,60,60); drawTree(370,280); }
-const npc4Visual = () => { clearScene(); drawValley(); drawStick(90,260,"#4ac",true,true); drawStick(150,260,"#c84",true); drawHouse(300,290,60,60); drawTree(350,280); }
-const finalVisual = () => { clearScene(); drawValley(); drawStick(120,260,"#4ac",true,true); drawTree(360,280); }
+const scene1Visual = () => { clearScene(); drawBackground(); drawStick(90,260,"#4ac",true,true,true); drawStick(150,260,"#6f4",true,false,true); drawHouse(300,280,60,60); drawTree(360,270); }
+const scene2Visual = () => { clearScene(); drawBackground(); drawStick(80,260,"#4ac",true,true,true); drawStick(160,260,"#b85",true,false,true); drawHouse(260,280,70,60); drawTent(380,300); drawTree(200,270); }
+const npc3Visual = () => { clearScene(); drawBackground(); drawStick(90,260,"#4ac",true,true,true); drawStick(150,260,"#e96",true,false,true); drawTree(400,270); drawTent(370,300); }
+const scene3Visual = () => { clearScene(); drawBackground(); drawStick(120,260,"#4ac",true,true,true); drawHouse(310,280,50,50); drawTree(360,270); drawTent(370,300); }
+const saloonVisual = () => { clearScene(); drawBackground(); drawStick(110,260,"#4ac",true,true,true); drawStick(180,260,"#b85",true,false,true); drawHouse(330,280,50,50,"saloon"); drawTree(380,270); drawTent(370,300); }
+const battleVisual = () => { clearScene(); drawBackground(); drawStick(90,260,"#4ac",true,true,true); drawStick(170,260,"#6f4",true,false,true); drawHouse(320,280,60,60); drawTree(370,270); drawTent(370,300); }
+const npc4Visual = () => { clearScene(); drawBackground(); drawStick(90,260,"#4ac",true,true,true); drawStick(150,260,"#c84",true,false,true); drawHouse(300,280,60,60); drawTree(350,270); drawTent(360,300); }
+const finalVisual = () => { clearScene(); drawBackground(); drawStick(120,260,"#4ac",true,true,true); drawTree(360,270); drawTent(370,300); }
 
 // =========================
 // SCENES
