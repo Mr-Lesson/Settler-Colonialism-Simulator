@@ -304,7 +304,7 @@ const finalVisual = () => {
     // SCENES
     // =========================
 function scene1() {
-    switchScene(scene1Visual);
+    scene1Visual();
     const lines = [
         "The year is 1851. Mexico has just lost the war, and the United States has taken California. Settlers from all over now flock west, chasing the smell of gold. You walk beside your wagon headed for the Sierra Nevada, hoping for a chance to stake a claim to find some gold.",
         "As you walk, you breathe a smile of relief: after months of grueling travel, you were almost at California.",
@@ -331,7 +331,7 @@ function scene1() {
     nextLine();
 }
 function scene2() {
-    switchScene(scene2Visual);
+    scene2Visual();
     const lines = [
         "After some time, you finally reach a river valley crowded with tents and rough shacks. As you look around, you see the Gold Rush in full swing: Americans like you from the East, European fortune seekers, Chilean and Sonoran miners, Kanakas from the Pacific, and growing numbers of Chinese laborers work the banks.",
         "The hills bear scars where hydraulic hoses and picks have torn the soil. You see the remnants of what appear to be native villages along the river burnt to ashes.",
@@ -356,7 +356,7 @@ function scene2() {
 }
 
 function npc3Scene() {
-    switchScene(npc3Visual);
+    npc3Visual();
     const lines = [
         "As you examine the banks, a small group approaches. At their head walks a Maidu woman, carrying woven baskets. You see those behind her carrying items foraged from around the river.",
         'NPC3: "Hello, I am NPC3. The men who came before you cut down our oaks, drove off our game, and turned our water into mud. Our dead still reside here. Whatever we can find, we bring here to sell. Please, will you buy something from us?"'
@@ -378,7 +378,7 @@ function npc3Scene() {
     nextLine();
 }
 function scene3() {
-    switchScene(scene3Visual);
+    scene3Visual();
     const lines = [
         "Having finally found a place to claim, you begin trying to find gold, but fail. As night falls, you head to the small settlement put together for those searching for gold. You eat and fall asleep, thinking about NPC3.",
         "As you wake up, you see some new notices being set up outside the courthouse.",
@@ -410,7 +410,7 @@ function scene3() {
     nextLine();
 }
 function scene4Normal() {
-    switchScene(saloonVisual);
+    saloonVisual();
     const lines = [
         "One evening, miners and townspeople gather outside a saloon. NPC2 sits on a crate, reading a notice.",
         'NPC2: "County Supervisors have authorized funds for a new expedition. A band in the hills has been accused of stock theft and threatening settlers. The state will reimburse expenses and those who bring in ‘hostiles’."',
@@ -434,7 +434,7 @@ function scene4Normal() {
 }
 
 function scene4NPC1Followup() {
-    switchScene(npc4Visual);
+    npc4Visual();
     const lines = [
         "NPC1 comes up to you later that day, covered in scratches and bruises.",
         'NPC1: "A white miner jumped my claim. When I fought back, he and his friends beat me. If this goes to court, notice says my word can’t stand against his."',
@@ -457,7 +457,7 @@ function scene4NPC1Followup() {
     nextLine();
 }
 function sceneBattle() {
-    switchScene(battleVisual);
+    battleVisual();
     const lines = [
         "At dawn, you ride into the hills with NPC1 and several others. You find the camp filled with small shelters.",
         "Gunfire erupts. People scatter. What will you do?"
@@ -479,7 +479,7 @@ function sceneBattle() {
     nextLine();
 }
 function finalScene() {
-    switchScene(finalVisual);
+    finalVisual();
     const lines = [
         "Fast forward to 1855, the gold is all but gone.",
         "You get an opportunity to talk to NPC1 and reflect on the choices you made.",
