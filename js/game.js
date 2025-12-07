@@ -1,4 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
+
 // =========================
 // ELEMENTS
 // =========================
@@ -19,234 +20,144 @@ let waitingForEnter = false;
 let nextLineCallback = null;
 
 // =========================
-// CANVAS SETUP
+// CANVAS
 // =========================
 canvas.width = 800;
 canvas.height = 400;
-ctx.fillStyle = "#000"; // default black lines
-ctx.strokeStyle = "#000";
-ctx.lineWidth = 2;
 
-// Clear canvas function
-function clearCanvas() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+function clearScene() {
+    ctx.clearRect(0,0,canvas.width,canvas.height);
 }
 
 // =========================
 // SKIP HINT
 // =========================
 const skipHint = document.createElement("p");
-skipHint.id = "skip-hint";
-skipHint.style.fontSize = "14px";
-skipHint.style.color = "#d4aa70";
-skipHint.style.marginTop = "5px";
-skipHint.innerText = "Press Enter to skip/continue";
-skipHint.style.display = "none";
+skipHint.style.color="#d4aa70";
+skipHint.style.fontSize="13px";
+skipHint.style.marginTop="8px";
+skipHint.innerText="Press ENTER to continue";
+skipHint.style.display="none";
 gameScreen.appendChild(skipHint);
 
-function showSkipHint() { skipHint.style.display = "block"; }
-function hideSkipHint() { skipHint.style.display = "none"; }
+function showSkipHint(){ skipHint.style.display="block"; }
+function hideSkipHint(){ skipHint.style.display="none"; }
 
 // =========================
-// START GAME
+// START BUTTON
 // =========================
-    startBtn.addEventListener("click", () => {
-        titleScreen.style.display = "none";
-        gameScreen.style.display = "block";
-        clearCanvas(); // clear canvas for first scene
-        showSkipHint();
-        scene1(); // Start your first scene
-    });
+startBtn.addEventListener("click", () => {
+    titleScreen.style.display="none";
+    gameScreen.style.display="block";
+    showSkipHint();
+    scene1();
+});
 
 // =========================
-// TYPEWRITER TEXT
+// TYPEWRITER SYSTEM
 // =========================
-function typeText(text, callback) {
-    typing = true;
-    skipTyping = false;
-    waitingForEnter = false;
-    textBox.innerHTML = "";
-
-    hideChoices(); // hide choices while typing
+function typeText(text, onComplete){
+    typing=true;
+    skipTyping=false;
+    waitingForEnter=false;
+    textBox.innerHTML="";
+    hideChoices();
     showSkipHint();
 
-    let i = 0;
-    const speed = 25;
+    let i=0, speed=28;
 
-    function type() {
-        if (i < text.length) {
-            textBox.innerHTML += text.charAt(i);
-            i++;
-            if (skipTyping) {
-                textBox.innerHTML = text;
-                typing = false;
-                waitingForEnter = true;
-                nextLineCallback = callback;
-                return;
-            }
-            setTimeout(type, speed);
-        } else {
-            typing = false;
-            waitingForEnter = true;
-            nextLineCallback = callback;
+    function step(){
+        if(skipTyping){
+            textBox.innerHTML=text;
+            finish();
+            return;
         }
+        if(i<text.length){
+            textBox.innerHTML+=text.charAt(i);
+            i++;
+            setTimeout(step,speed);
+        } else finish();
     }
-
-    type();
+    function finish(){
+        typing=false;
+        waitingForEnter=true;
+        nextLineCallback=onComplete;
+    }
+    step();
 }
 
 // =========================
 // CHOICES
 // =========================
-function showChoices(choices) {
-    hideSkipHint(); // hide hint during choices
-    waitingForEnter = false;
-    choicesDiv.innerHTML = "";
+function showChoices(list){
+    choicesDiv.innerHTML="";
+    hideSkipHint();
+    waitingForEnter=false;
 
-    choices.forEach(choice => {
-        const btn = document.createElement("button");
-        btn.textContent = choice.text;
-        btn.className = "choice-btn";
-        btn.onclick = () => {
-            typeText(choice.response, () => choice.action());
-        };
+    list.forEach(c=>{
+        const btn=document.createElement("button");
+        btn.textContent=c.text;
+        btn.onclick=()=>typeText(c.response,()=>c.action());
         choicesDiv.appendChild(btn);
     });
 }
 
-function hideChoices() { choicesDiv.innerHTML = ""; }
+function hideChoices(){ choicesDiv.innerHTML=""; }
 
 // =========================
-// ENTER KEY HANDLER
+// ENTER KEY
 // =========================
-document.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") {
-        if (typing) {
-            skipTyping = true; // skip current text
-        } else if (waitingForEnter && nextLineCallback) {
-            const cb = nextLineCallback;
-            nextLineCallback = null;
-            waitingForEnter = false;
-            cb(); // go to next line
+document.addEventListener("keydown",e=>{
+    if(e.key==="Enter"){
+        if(typing) skipTyping=true;
+        else if(waitingForEnter && nextLineCallback){
+            let fn=nextLineCallback;
+            nextLineCallback=null;
+            waitingForEnter=false;
+            fn();
         }
     }
 });
 
-
 // =========================
-// CANVAS DRAWING
+// DRAW
 // =========================
-function clearScene() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+function drawStick(x,y,color="white"){
+    ctx.strokeStyle=color;
+    ctx.lineWidth=2;
+    ctx.beginPath(); ctx.arc(x,y,10,0,Math.PI*2); ctx.stroke();
+    ctx.moveTo(x,y+10); ctx.lineTo(x,y+40); ctx.stroke();
+    ctx.moveTo(x-12,y+20); ctx.lineTo(x+12,y+20); ctx.stroke();
+    ctx.moveTo(x,y+40); ctx.lineTo(x-12,y+60); ctx.stroke();
+    ctx.moveTo(x,y+40); ctx.lineTo(x+12,y+60); ctx.stroke();
 }
-
-function drawStickFigure(x, y, color="black") {
-    ctx.strokeStyle = color;
-    ctx.lineWidth = 2;
-
-    // Head
+function drawHouse(x,y,w,h){
+    ctx.fillStyle="#653";
+    ctx.fillRect(x,y,w,h);
     ctx.beginPath();
-    ctx.arc(x, y, 10, 0, Math.PI*2);
-    ctx.stroke();
-
-    // Body
-    ctx.moveTo(x, y+10);
-    ctx.lineTo(x, y+40);
-    ctx.stroke();
-
-    // Arms
-    ctx.moveTo(x-15, y+20);
-    ctx.lineTo(x+15, y+20);
-    ctx.stroke();
-
-    // Legs
-    ctx.moveTo(x, y+40);
-    ctx.lineTo(x-15, y+60);
-    ctx.moveTo(x, y+40);
-    ctx.lineTo(x+15, y+60);
-    ctx.stroke();
+    ctx.moveTo(x,y); ctx.lineTo(x+w/2,y-h/2); ctx.lineTo(x+w,y);
+    ctx.fillStyle="#922"; ctx.fill();
 }
-
-function drawHouse(x, y, w, h, color="brown") {
-    ctx.fillStyle = color;
-    ctx.fillRect(x, y, w, h);
-    ctx.beginPath();
-    ctx.moveTo(x, y);
-    ctx.lineTo(x + w/2, y - h/2);
-    ctx.lineTo(x+w, y);
-    ctx.closePath();
-    ctx.fillStyle="red";
-    ctx.fill();
-}
-
-function drawValley() {
-    ctx.fillStyle="green";
-    ctx.fillRect(0, canvas.height-50, canvas.width, 50);
-}
+function valley(){ ctx.fillStyle="#083"; ctx.fillRect(0,350,800,50); }
 
 // =========================
-// SCENE VISUALS
+// VISUAL SCENES
 // =========================
-function scene1Visuals() {
-    clearScene();
-    drawValley();
-    drawStickFigure(100, 250, "blue"); // player
-    drawStickFigure(150, 250, "green"); // NPC1
-    drawHouse(300, 270, 50, 50); // shack
-}
-
-function scene2Visuals() {
-    clearScene();
-    drawValley();
-    drawStickFigure(120, 250, "blue"); // player
-    drawStickFigure(180, 250, "brown"); // NPC2
-    drawHouse(250, 270, 60, 60);
-    drawHouse(350, 270, 40, 40);
-}
-
-function sceneNPC3Visuals() {
-    clearScene();
-    drawValley();
-    drawStickFigure(100, 250, "blue"); // player
-    drawStickFigure(150, 250, "orange"); // NPC3
-}
-
-function scene3Visuals() {
-    clearScene();
-    drawValley();
-    drawStickFigure(120, 250, "blue"); // player
-    drawHouse(300, 270, 50, 50); // settlement
-}
-
-function scene4Visuals() {
-    clearScene();
-    drawValley();
-    drawStickFigure(100, 250, "blue");
-    drawStickFigure(150, 250, "brown");
-}
-
-function sceneBattleVisuals() {
-    clearScene();
-    drawValley();
-    drawStickFigure(100, 250, "blue");
-    drawStickFigure(150, 250, "green");
-    drawHouse(300, 270, 50, 50);
-    drawHouse(350, 270, 40, 40);
-}
-
-function finalSceneVisuals() {
-    clearScene();
-    drawValley();
-    drawStickFigure(100, 250, "blue");
-    drawStickFigure(150, 250, "green");
-    drawHouse(300, 270, 50, 50);
-}
+const scene1Visual=()=>{clearScene();valley();drawStick(90,260,"#4ac");drawStick(150,260,"#6f4");drawHouse(300,290,60,60);}
+const scene2Visual=()=>{clearScene();valley();drawStick(90,260,"#4ac");drawStick(160,260,"#b85");drawHouse(260,285,70,60);}
+const npc3Visual  =()=>{clearScene();valley();drawStick(90,260,"#4ac");drawStick(150,260,"#e96");}
+const scene3Visual=()=>{clearScene();valley();drawStick(120,260,"#4ac");drawHouse(310,290,50,50);}
+const saloonVisual=()=>{clearScene();valley();drawStick(110,260,"#4ac");drawStick(180,260,"#b85");}
+const battleVisual=()=>{clearScene();valley();drawStick(90,260,"#4ac");drawStick(170,260,"#6f4");drawHouse(320,285,60,60);}
+const npc4Visual = () => {clearScene();valley();drawStick(90,260,"#4ac");drawStick(150,260,"#c84");drawHouse(300,290,60,60); };
+const finalVisual =()=>{clearScene();valley();drawStick(120,260,"#4ac");}
 
 // =========================
-// SCENES
+// GAME SCENES
 // =========================
+
 function scene1() {
-    scene1Visuals();
+    scene1Visual();
     const lines = [
         "The year is 1851. Mexico has just lost the war, and the United States has taken California...",
         "As you walk, you breathe a smile of relief...",
@@ -274,7 +185,7 @@ function scene1() {
 }
 
 function scene2() {
-    scene2Visuals();
+    scene2Visual();
     const lines = [
         "After some time, you finally reach a river valley crowded with tents and rough shacks...",
         "The hills bear scars where hydraulic hoses and picks have torn the soil...",
@@ -298,7 +209,7 @@ function scene2() {
 }
 
 function sceneNPC3() {
-    sceneNPC3Visuals();
+    npc3Visual();
     const lines = [
         "As you examine the banks, a small group approaches...",
         'NPC3: "Hello, I am NPC3. The men who came before you cut down our oaks..."'
@@ -321,7 +232,7 @@ function sceneNPC3() {
 }
 
 function scene3() {
-    scene3Visuals();
+    scene3Visual();
     const lines = [
         "Having finally found a place to claim, you begin trying to find gold...",
         "Next morning, you see new notices being set up outside the courthouse...",
@@ -347,7 +258,7 @@ function scene3() {
     nextLine();
 }
 function scene4Normal() {
-    scene4Visuals();
+    saloonVisual();
     const lines = [
         "Evening outside the saloon. NPC2 reads a notice about an expedition."
     ];
@@ -372,7 +283,7 @@ function scene4Normal() {
 // SCENE 4 NPC1 FOLLOW-UP PATH
 // =========================
 function scene4NPC1Followup() {
-    scene4Visuals();
+    npc4Visual();
     const lines = [
         "NPC1 approaches you later that day, covered in scratches and bruises."
     ];
@@ -397,7 +308,7 @@ function scene4NPC1Followup() {
 // SCENE BATTLE
 // =========================
 function sceneBattle() {
-    sceneBattleVisuals();
+    battleVisual();
     const lines = [
         "At dawn, you ride into the hills with NPC1 and several others. You find the camp filled with small shelters.",
         "Gunfire erupts. People scatter. What will you do?"
@@ -423,7 +334,7 @@ function sceneBattle() {
 // FINAL SCENE / REFLECTION
 // =========================
 function finalScene() {
-    finalSceneVisuals();
+    finalVisual();
     const reflectionLines = [
         "Fast forward to 1855, the gold is all but gone.",
         "You get an opportunity to talk to NPC1 and reflect on the choices you made.",
