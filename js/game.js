@@ -47,8 +47,8 @@ function typeText(text, callback) {
     skipTyping = false;
     waitingForEnter = false;
     textBox.innerHTML = "";
-    hideChoices();
-    showSkipHint();
+    // DO NOT hide the hint here
+    showSkipHint(); // hint stays visible while typing
 
     let i = 0;
     const speed = 25;
@@ -74,11 +74,8 @@ function typeText(text, callback) {
     type();
 }
 
-// =========================
-// CHOICES
-// =========================
 function showChoices(choices) {
-    hideSkipHint(); // hide hint while choosing
+    hideSkipHint(); // hide hint when player is choosing
     choicesDiv.innerHTML = "";
     choices.forEach(choice => {
         const btn = document.createElement("button");
@@ -90,7 +87,6 @@ function showChoices(choices) {
         choicesDiv.appendChild(btn);
     });
 }
-
 function hideChoices() { choicesDiv.innerHTML = ""; }
 
 // =========================
