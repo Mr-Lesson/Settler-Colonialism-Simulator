@@ -9,8 +9,8 @@ const choicesDiv = document.getElementById("choices");
 
 let typing = false;
 let skipTyping = false;
-let currentCallback = null;
 let waitingForNext = false;
+let currentCallback = null;
 
 // =========================
 // START GAME
@@ -59,7 +59,7 @@ function typeText(text, callback) {
 }
 
 // =========================
-// SHOW CHOICES
+// CHOICES
 // =========================
 function showChoices(choices) {
     choicesDiv.innerHTML = "";
@@ -81,20 +81,13 @@ const skipHint = document.createElement("p");
 skipHint.id = "skip-hint";
 skipHint.style.fontSize = "14px";
 skipHint.style.color = "#d4aa70";
-skipHint.innerText = "Press Enter to skip or advance";
+skipHint.innerText = "Press Enter to skip or continue";
 skipHint.style.display = "none";
 gameScreen.appendChild(skipHint);
 
-function showSkipHint() {
-    skipHint.style.display = "block";
-}
-function hideSkipHint() {
-    skipHint.style.display = "none";
-}
+function showSkipHint() { skipHint.style.display = "block"; }
+function hideSkipHint() { skipHint.style.display = "none"; }
 
-// =========================
-// ENTER KEY HANDLER
-// =========================
 document.addEventListener("keydown", (e) => {
     if (e.key === "Enter") {
         if (typing) {
@@ -107,6 +100,26 @@ document.addEventListener("keydown", (e) => {
         }
     }
 });
+
+// =========================
+// UTILITY: PLAY LINES
+// =========================
+function playLines(lines, nextScene) {
+    let i = 0;
+
+    function nextLine() {
+        if (i < lines.length) {
+            const line = lines[i];
+            currentCallback = () => nextLine();
+            typeText(line, null);
+            i++;
+        } else {
+            currentCallback = null;
+            nextScene();
+        }
+    }
+    nextLine();
+}
 
 // =========================
 // SCENES
@@ -124,21 +137,13 @@ function scene1() {
         'NPC1: "Back East, I worked fields I would never own. I was just property. Here, they say the land is free. You think it’ll be free for someone like me?"'
     ];
 
-    let i = 0;
-    function nextLine() {
-        if (i < lines.length) {
-            currentCallback = nextLine;
-            typeText(lines[i], nextLine);
-            i++;
-        } else {
-            showChoices([
-                { text: "Of course it's free", response: "NPC1 nods quietly, a small hopeful smile on his face.", action: scene2 },
-                { text: "Not sure", response: "NPC1 shrugs, uncertain, but maintains a quiet optimism.", action: scene2 },
-                { text: "I don’t care about what others think", response: "NPC1 looks at you, takes a deep breath, but continues with a quiet optimism.", action: scene2 }
-            ]);
-        }
-    }
-    nextLine();
+    playLines(lines, () => {
+        showChoices([
+            { text: "Of course it's free", response: "NPC1 nods quietly, a small hopeful smile on his face.", action: scene2 },
+            { text: "Not sure", response: "NPC1 shrugs, uncertain, but maintains a quiet optimism.", action: scene2 },
+            { text: "I don’t care about what others think", response: "NPC1 looks at you, takes a deep breath, but continues with a quiet optimism.", action: scene2 }
+        ]);
+    });
 }
 
 // Scene 2
@@ -150,21 +155,13 @@ function scene2() {
         'NPC2: "The name’s NPC2. When I rode in ‘49, this valley was full of camps. Governor said they wanted to make it safe for settlers. We took care of that. State paid us per head."'
     ];
 
-    let i = 0;
-    function nextLine() {
-        if (i < lines.length) {
-            currentCallback = nextLine;
-            typeText(lines[i], nextLine);
-            i++;
-        } else {
-            showChoices([
-                { text: "Approve", response: "NPC2 nods approvingly and remembers your stance.", action: sceneNPC3 },
-                { text: "Ask about the villages", response: "NPC2 brushes off your question, uninterested.", action: sceneNPC3 },
-                { text: "Ask for advice", response: "NPC2 advises caution: avoid areas with other white men staking a claim.", action: sceneNPC3 }
-            ]);
-        }
-    }
-    nextLine();
+    playLines(lines, () => {
+        showChoices([
+            { text: "Approve", response: "NPC2 nods approvingly and remembers your stance.", action: sceneNPC3 },
+            { text: "Ask about the villages", response: "NPC2 brushes off your question, uninterested.", action: sceneNPC3 },
+            { text: "Ask for advice", response: "NPC2 advises caution: avoid areas with other white men staking a claim.", action: sceneNPC3 }
+        ]);
+    });
 }
 
 // Scene NPC3
@@ -174,21 +171,13 @@ function sceneNPC3() {
         'NPC3: "Hello, I am NPC3. The men who came before you cut down our oaks, drove off our game, and turned our water into mud. Our dead still reside here. Whatever we can find, we bring here to sell. Please, will you buy something from us?"'
     ];
 
-    let i = 0;
-    function nextLine() {
-        if (i < lines.length) {
-            currentCallback = nextLine;
-            typeText(lines[i], nextLine);
-            i++;
-        } else {
-            showChoices([
-                { text: "Buy and listen", response: "NPC3 thanks you and shares more about their story.", action: scene3 },
-                { text: "Dismiss her", response: "NPC3 leaves quietly, disappointed.", action: scene3 },
-                { text: "Reassure but don't buy", response: "NPC3 seems unhappy but nods silently.", action: scene3 }
-            ]);
-        }
-    }
-    nextLine();
+    playLines(lines, () => {
+        showChoices([
+            { text: "Buy and listen", response: "NPC3 thanks you and shares more about their story.", action: scene3 },
+            { text: "Dismiss her", response: "NPC3 leaves quietly, disappointed.", action: scene3 },
+            { text: "Reassure but don't buy", response: "NPC3 seems unhappy but nods silently.", action: scene3 }
+        ]);
+    });
 }
 
 // Scene 3
@@ -201,22 +190,14 @@ function scene3() {
         "NPC1 looks to you, almost expecting you to say something."
     ];
 
-    let i = 0;
-    function nextLine() {
-        if (i < lines.length) {
-            currentCallback = nextLine;
-            typeText(lines[i], nextLine);
-            i++;
-        } else {
-            showChoices([
-                { text: "Praise the ruling", response: "NPC1 scoffs and turns away.", action: scene4Normal },
-                { text: "Quietly approach the family", response: "NPC1 gives you a more positive look.", action: scene4NPC1Followup },
-                { text: "Turn away", response: "NPC1 gives you a strange look.", action: scene4Normal },
-                { text: "Object to the trial", response: "NPC2 comes up extremely unhappy and threatens you.", action: scene4NPC1Followup }
-            ]);
-        }
-    }
-    nextLine();
+    playLines(lines, () => {
+        showChoices([
+            { text: "Praise the ruling", response: "NPC1 scoffs and turns away.", action: scene4Normal },
+            { text: "Quietly approach the family", response: "NPC1 gives you a more positive look.", action: scene4NPC1Followup },
+            { text: "Turn away", response: "NPC1 gives you a strange look.", action: scene4Normal },
+            { text: "Object to the trial", response: "NPC2 comes up extremely unhappy and threatens you.", action: scene4NPC1Followup }
+        ]);
+    });
 }
 
 // Scene 4 normal path
@@ -248,42 +229,24 @@ function sceneBattle() {
         "Gunfire erupts. People scatter. What will you do?"
     ];
 
-    let i = 0;
-    function nextLine() {
-        if (i < lines.length) {
-            currentCallback = nextLine;
-            typeText(lines[i], nextLine);
-            i++;
-        } else {
-            showChoices([
-                { text: "Fire at a fleeing figure", response: "The camp is destroyed and burnt down. NPC1 praises your effort. You win a sizeable bounty.", action: finalScene },
-                { text: "Fire and purposefully miss", response: "Same destruction occurs. NPC1 is upset and you receive no reward.", action: finalScene },
-                { text: "Shield someone physically", response: "A few are saved. NPC1 is extremely upset and promises punishment.", action: finalScene }
-            ]);
-        }
-    }
-    nextLine();
+    playLines(lines, () => {
+        showChoices([
+            { text: "Fire at a fleeing figure", response: "The camp is destroyed and burnt down. NPC1 praises your effort. You win a sizeable bounty.", action: finalScene },
+            { text: "Fire and purposefully miss", response: "Same destruction occurs. NPC1 is upset and you receive no reward.", action: finalScene },
+            { text: "Shield someone physically", response: "A few are saved. NPC1 is extremely upset and promises punishment.", action: finalScene }
+        ]);
+    });
 }
 
 // Final Scene / Reflection
 function finalScene() {
-    const reflectionLines = [
+    const lines = [
         "Fast forward to 1855, the gold is all but gone.",
         "You get an opportunity to talk to NPC1 and reflect on the choices you made.",
         "NPC1: Based on your actions, here’s what I think about how we all navigated these times..."
     ];
 
-    let i = 0;
-    function nextReflection() {
-        if (i < reflectionLines.length) {
-            currentCallback = nextReflection;
-            typeText(reflectionLines[i], nextReflection);
-            i++;
-        } else {
-            endGame("=== THE END ===");
-        }
-    }
-    nextReflection();
+    playLines(lines, () => endGame("=== THE END ==="));
 }
 
 // End Game
