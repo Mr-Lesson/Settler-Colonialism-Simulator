@@ -16,17 +16,57 @@ let waitingForEnter = false;
 let nextLineCallback = null;
 
 // =========================
-// STICK FIGURES
+// STICK FIGURES & SCENERY
 // =========================
 const stickFigures = {
-    scene1: "   o\n  /|\\\n  / \\\n(You walking)",
-    scene2: "   o\n  /|\\\n  / \\\n(NPC2 greeting)",
-    sceneNPC3: "   o\n  /|\\\n  / \\\n(NPC3 selling)",
-    scene3: "   o\n  /|\\\n  / \\\n(Courthouse)",
-    scene4Normal: "   o\n  /|\\\n  / \\\n(Evening saloon)",
-    scene4NPC1Followup: "   o\n  /|\\\n  / \\\n(NPC1 bruised)",
-    sceneBattle: " o   o\n/|\\ /|\\\n/ \\ / \\\n(Battle)",
-    finalScene: "   o\n  /|\\\n  / \\\n(Reflection)"
+    scene1: `
+  o  
+ /|\\    ~~~ Sierra Nevada
+ / \\   /     
+You walk toward the mountains
+`,
+    scene2: `
+  o  
+ /|\\   /\\   ~~~ River Valley
+ / \\  /  \\ 
+NPC2 greets you by the tents
+`,
+    sceneNPC3: `
+  o
+ /|\\    []  []  ~~~~ Market
+ / \\   /  \\ 
+NPC3 selling goods
+`,
+    scene3: `
+   o
+  /|\\   ||  ||  []  
+  / \\  /  \\  [] Courthouse
+Legal hearing underway
+`,
+    scene4Normal: `
+   o
+  /|\\   ____
+  / \\  |    |  ~~~ Saloon
+Evening outside
+`,
+    scene4NPC1Followup: `
+   o
+  /|\\   /\\
+  / \\  /  \\  Bruised NPC1
+He approaches you
+`,
+    sceneBattle: `
+ o   o
+/|\\ /|\\  ~~~ Hills and shelters
+/ \\ / \\
+Gunfire erupts
+`,
+    finalScene: `
+   o
+  /|\\   ~~~ River and mountains
+  / \\  
+Reflection time with NPC1
+`
 };
 
 // =========================
@@ -63,7 +103,7 @@ function typeText(text, stick, callback) {
     choicesDiv.innerHTML = ""; // hide choices while typing
     showSkipHint();
 
-    textBox.innerHTML = `<pre style="text-align:center; color:green;">${stick}</pre><div class="text-box-inner"></div>`;
+    textBox.innerHTML = `<pre style="text-align:center; color:#4CAF50;">${stick}</pre><div class="text-box-inner" style="background:#fff8dc; padding:10px; border-radius:12px; margin-top:8px; color:#000; font-family:monospace;"></div>`;
     const innerDiv = textBox.querySelector(".text-box-inner");
 
     let i = 0;
@@ -272,6 +312,6 @@ function finalScene() {
 
 function endGame(message) {
     typeText(message, stickFigures.finalScene);
-    hideChoices();
+    choicesDiv.innerHTML = "";
     nextLineCallback = null;
 }
