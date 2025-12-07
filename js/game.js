@@ -19,54 +19,14 @@ let nextLineCallback = null;
 // STICK FIGURES
 // =========================
 const stickFigures = {
-    scene1: `
-   o
-  /|\\
-  / \\
- (You walking)
-    `,
-    scene2: `
-   o
-  /|\\
-  / \\
- (NPC2 greeting)
-    `,
-    sceneNPC3: `
-   o
-  /|\\
-  / \\
- (NPC3 selling)
-    `,
-    scene3: `
-   o
-  /|\\
-  / \\
- (Courthouse)
-    `,
-    scene4Normal: `
-   o
-  /|\\
-  / \\
- (Evening saloon)
-    `,
-    scene4NPC1Followup: `
-   o
-  /|\\
-  / \\
- (NPC1 bruised)
-    `,
-    sceneBattle: `
- o   o
-/|\\ /|\\
-/ \\ / \\
-(Battle)
-    `,
-    finalScene: `
-   o
-  /|\\
-  / \\
- (Reflection)
-    `
+    scene1: "   o\n  /|\\\n  / \\\n(You walking)",
+    scene2: "   o\n  /|\\\n  / \\\n(NPC2 greeting)",
+    sceneNPC3: "   o\n  /|\\\n  / \\\n(NPC3 selling)",
+    scene3: "   o\n  /|\\\n  / \\\n(Courthouse)",
+    scene4Normal: "   o\n  /|\\\n  / \\\n(Evening saloon)",
+    scene4NPC1Followup: "   o\n  /|\\\n  / \\\n(NPC1 bruised)",
+    sceneBattle: " o   o\n/|\\ /|\\\n/ \\ / \\\n(Battle)",
+    finalScene: "   o\n  /|\\\n  / \\\n(Reflection)"
 };
 
 // =========================
@@ -99,32 +59,26 @@ function typeText(text, stick, callback) {
     typing = true;
     skipTyping = false;
     waitingForEnter = false;
-    textBox.innerHTML = "";
 
-    hideChoices();
+    choicesDiv.innerHTML = ""; // hide choices while typing
     showSkipHint();
 
-    textBox.innerHTML = `<pre style="color: green; text-align:center;">${stick}</pre>\n<div class="text-box-inner">${text}</div>`;
+    textBox.innerHTML = `<pre style="text-align:center; color:green;">${stick}</pre><div class="text-box-inner"></div>`;
+    const innerDiv = textBox.querySelector(".text-box-inner");
 
     let i = 0;
-    const speed = 25;
-    const innerDiv = textBox.querySelector(".text-box-inner");
-    const fullText = text;
-
-    innerDiv.innerHTML = "";
-
     function type() {
-        if (i < fullText.length) {
-            innerDiv.innerHTML += fullText.charAt(i);
+        if (i < text.length) {
+            innerDiv.innerHTML += text.charAt(i);
             i++;
             if (skipTyping) {
-                innerDiv.innerHTML = fullText;
+                innerDiv.innerHTML = text;
                 typing = false;
                 waitingForEnter = true;
                 nextLineCallback = callback;
                 return;
             }
-            setTimeout(type, speed);
+            setTimeout(type, 25);
         } else {
             typing = false;
             waitingForEnter = true;
@@ -152,16 +106,13 @@ function showChoices(choices) {
     });
 }
 
-function hideChoices() { choicesDiv.innerHTML = ""; }
-
 // =========================
 // ENTER HANDLER
 // =========================
 document.addEventListener("keydown", (e) => {
     if (e.key === "Enter") {
-        if (typing) {
-            skipTyping = true;
-        } else if (waitingForEnter && nextLineCallback) {
+        if (typing) skipTyping = true;
+        else if (waitingForEnter && nextLineCallback) {
             const cb = nextLineCallback;
             nextLineCallback = null;
             waitingForEnter = false;
@@ -175,15 +126,10 @@ document.addEventListener("keydown", (e) => {
 // =========================
 function scene1() {
     const lines = [
-        "The year is 1851. Mexico has just lost the war, and the United States has taken California. Settlers from all over now flock west, chasing the smell of gold. You walk beside your wagon headed for the Sierra Nevada, hoping for a chance to stake a claim to find some gold.",
-        "As you walk, you breathe a smile of relief: after months of grueling travel, you were almost at California.",
-        "The people you’ve met traveling the California Trail all said the same thing: This is the place of opportunity. This is where you will have the chance to make the money you need to make you and your family rich.",
-        "You give yourself a small smile. This may be the place where your dreams can come true. A place of equal opportunity: where every man could have an equal shot at getting rich. But you must remain vigilant: despite all that those have said to you, you have no idea what you’re getting into.",
-        "As you walk, you encounter NPC1, a freedman you’ve encountered many times on your way to California, setting up camp. As it’s getting late, you decide to do the same.",
-        "After you finish, you begin chatting with NPC1 about the land ahead.",
-        'NPC1: "Back East, I worked fields I would never own. I was just property. Here, they say the land is free. You think it’ll be free for someone like me?"'
+        "The year is 1851. Mexico has just lost the war, and the United States has taken California.",
+        "You walk beside your wagon headed for the Sierra Nevada, hoping to stake a claim.",
+        'NPC1: "Back East, I worked fields I would never own. Here, they say the land is free. Think it’ll be free for me?"'
     ];
-
     let i = 0;
     function nextLine() {
         if (i < lines.length) {
@@ -192,8 +138,7 @@ function scene1() {
         } else {
             showChoices([
                 { text: "Of course it's free", response: "NPC1 nods quietly, a small hopeful smile on his face.", action: scene2 },
-                { text: "Not sure", response: "NPC1 shrugs, uncertain, but maintains a quiet optimism.", action: scene2 },
-                { text: "I don’t care about what others think", response: "NPC1 looks at you, takes a deep breath, but continues with a quiet optimism.", action: scene2 }
+                { text: "Not sure", response: "NPC1 shrugs, uncertain, but maintains a quiet optimism.", action: scene2 }
             ]);
         }
     }
@@ -202,12 +147,9 @@ function scene1() {
 
 function scene2() {
     const lines = [
-        "After some time, you finally reach a river valley crowded with tents and rough shacks. You see the Gold Rush in full swing: Americans from the East, European fortune seekers, Chilean and Sonoran miners, Kankakas from the Pacific, and Chinese laborers work the banks.",
-        "The hills bear scars where hydraulic hoses and picks have torn the soil. You see remnants of what appear to be native villages burnt to ashes.",
-        "A broad-shouldered man with a faded militia jacket walks up to you.",
-        'NPC2: "The name’s NPC2. When I rode in ‘49, this valley was full of camps. Governor said they wanted to make it safe for settlers. We took care of that. State paid us per head."'
+        "After some time, you reach a river valley crowded with tents and rough shacks.",
+        'NPC2: "The name’s NPC2. We took care of things here and got paid per head."'
     ];
-
     let i = 0;
     function nextLine() {
         if (i < lines.length) {
@@ -215,9 +157,8 @@ function scene2() {
             i++;
         } else {
             showChoices([
-                { text: "Approve", response: "NPC2 nods approvingly and remembers your stance.", action: sceneNPC3 },
-                { text: "Ask about the villages", response: "NPC2 brushes off your question, uninterested.", action: sceneNPC3 },
-                { text: "Ask for advice", response: "NPC2 advises caution: avoid areas with other white men staking a claim.", action: sceneNPC3 }
+                { text: "Approve", response: "NPC2 nods approvingly.", action: sceneNPC3 },
+                { text: "Ask about villages", response: "NPC2 brushes off your question.", action: sceneNPC3 }
             ]);
         }
     }
@@ -226,10 +167,9 @@ function scene2() {
 
 function sceneNPC3() {
     const lines = [
-        "As you examine the banks, a small group approaches. At their head walks a Maidu woman, carrying woven baskets. You see those behind her carrying items from around the river.",
-        'NPC3: "Hello, I am NPC3. The men who came before you cut down our oaks, drove off our game, and turned our water into mud. Our dead still reside here. Whatever we can find, we bring here to sell. Please, will you buy something from us?"'
+        "A Maidu woman approaches, carrying woven baskets.",
+        'NPC3: "Hello, I am NPC3. Our dead still reside here. Will you buy something from us?"'
     ];
-
     let i = 0;
     function nextLine() {
         if (i < lines.length) {
@@ -248,13 +188,12 @@ function sceneNPC3() {
 
 function scene3() {
     const lines = [
-        "Having finally found a place to claim, you begin trying to find gold, but fail. As night falls, you head to the small settlement put together for those searching for gold. You eat and fall asleep, thinking about NPC3.",
-        "Next morning, you see new notices being set up outside the courthouse about protection of Indians, Foreign Miner’s Tax, and legal restrictions for evidence.",
-        "Inside, you see a hearing underway. A Californio man waves land-grants written in Spanish while a white man argues that under American law, that grant is void.",
-        "Judge: 'Your claim lacks the survey and documentation required by the Land Act of 1851. The present settler has demonstrated occupation and improvement under U.S. standards, thus the claim is awarded to him.'",
+        "Having found a place to claim, you begin trying to find gold, but fail.",
+        "Next morning, you see notices outside the courthouse about protection of Indians and legal restrictions.",
+        "Inside, a hearing is underway.",
+        "Judge: 'Your claim lacks documentation. The present settler demonstrated occupation and improvement; thus, the claim is awarded to him.'",
         "NPC1 looks to you, almost expecting you to say something."
     ];
-
     let i = 0;
     function nextLine() {
         if (i < lines.length) {
@@ -297,7 +236,6 @@ function sceneBattle() {
         "At dawn, you ride into the hills with NPC1 and several others. You find the camp filled with small shelters.",
         "Gunfire erupts. People scatter. What will you do?"
     ];
-
     let i = 0;
     function nextLine() {
         if (i < lines.length) {
@@ -305,8 +243,8 @@ function sceneBattle() {
             i++;
         } else {
             showChoices([
-                { text: "Fire at a fleeing figure", response: "The camp is destroyed and burnt down. NPC1 praises your effort. You win a sizeable bounty.", action: finalScene },
-                { text: "Fire and purposefully miss", response: "Same destruction occurs. NPC1 is upset and you receive no reward.", action: finalScene },
+                { text: "Fire at a fleeing figure", response: "The camp is destroyed. NPC1 praises your effort.", action: finalScene },
+                { text: "Fire and purposely miss", response: "The camp is destroyed. NPC1 is upset and you receive no reward.", action: finalScene },
                 { text: "Shield someone physically", response: "A few are saved. NPC1 is extremely upset and promises punishment.", action: finalScene }
             ]);
         }
@@ -315,22 +253,21 @@ function sceneBattle() {
 }
 
 function finalScene() {
-    const reflectionLines = [
+    const lines = [
         "Fast forward to 1855, the gold is all but gone.",
-        "You get an opportunity to talk to NPC1 and reflect on the choices you made.",
+        "You talk to NPC1 and reflect on the choices you made.",
         'NPC1: "Based on your actions, here’s what I think about how we all navigated these times..."'
     ];
-
     let i = 0;
-    function nextReflection() {
-        if (i < reflectionLines.length) {
-            typeText(reflectionLines[i], stickFigures.finalScene, nextReflection);
+    function nextLine() {
+        if (i < lines.length) {
+            typeText(lines[i], stickFigures.finalScene, nextLine);
             i++;
         } else {
             endGame("=== THE END ===");
         }
     }
-    nextReflection();
+    nextLine();
 }
 
 function endGame(message) {
