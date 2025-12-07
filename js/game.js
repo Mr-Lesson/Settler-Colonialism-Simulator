@@ -35,13 +35,6 @@ gameScreen.appendChild(skipHint);
 function showSkipHint() {
     skipHint.style.display = "block";
 }
-function hideSkipHint() {
-    skipHint.style.display = "none";
-}
-
-// =========================
-// TYPEWRITER TEXT
-// =========================
 function typeText(text, callback) {
     typing = true;
     waitingForEnter = false;
@@ -75,6 +68,21 @@ function typeText(text, callback) {
 
     type();
 }
+
+// ENTER handler
+document.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+        if (typing) {
+            skipTyping = true;
+        } else if (waitingForEnter && nextLineCallback) {
+            const cb = nextLineCallback;
+            nextLineCallback = null;
+            waitingForEnter = false;
+            cb();
+        }
+    }
+});
+
 
 function showChoices(choices) {
     choicesDiv.innerHTML = "";
