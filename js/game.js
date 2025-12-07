@@ -8,8 +8,8 @@ const textBox = document.getElementById("text-box");
 const choicesDiv = document.getElementById("choices");
 
 let typing = false;
-let waitingForEnter = false;
 let skipTyping = false;
+let waitingForEnter = false;
 let nextLineCallback = null;
 
 // =========================
@@ -22,15 +22,34 @@ startBtn.addEventListener("click", () => {
 });
 
 // =========================
+// SKIP HINT
+// =========================
+const skipHint = document.createElement("p");
+skipHint.id = "skip-hint";
+skipHint.style.fontSize = "14px";
+skipHint.style.color = "#d4aa70";
+skipHint.style.marginTop = "10px";
+skipHint.innerText = "Press Enter to continue or skip";
+gameScreen.appendChild(skipHint);
+
+function showSkipHint() {
+    skipHint.style.display = "block";
+}
+function hideSkipHint() {
+    skipHint.style.display = "none";
+}
+
+// =========================
 // TYPEWRITER TEXT
 // =========================
-function typeText(text) {
+function typeText(text, callback) {
     typing = true;
     waitingForEnter = false;
     skipTyping = false;
     textBox.innerHTML = "";
     hideChoices();
-    showSkipHint();
+
+    showSkipHint(); // always show hint
 
     let i = 0;
     const speed = 25;
@@ -43,33 +62,39 @@ function typeText(text) {
                 textBox.innerHTML = text;
                 typing = false;
                 waitingForEnter = true;
-                hideSkipHint();
+                nextLineCallback = callback;
                 return;
             }
             setTimeout(type, speed);
         } else {
             typing = false;
             waitingForEnter = true;
-            hideSkipHint();
+            nextLineCallback = callback;
         }
     }
 
     type();
 }
 
-// =========================
-// SKIP HINT
-// =========================
-const skipHint = document.createElement("p");
-skipHint.id = "skip-hint";
-skipHint.style.fontSize = "14px";
-skipHint.style.color = "#d4aa70";
-skipHint.innerText = "Press Enter to continue / skip";
-skipHint.style.display = "none";
-gameScreen.appendChild(skipHint);
+function showChoices(choices) {
+    choicesDiv.innerHTML = "";
+    choices.forEach(choice => {
+        const btn = document.createElement("button");
+        btn.textContent = choice.text;
+        btn.className = "choice-btn";
+        btn.onclick = () => {
+            typeText(choice.response, () => {
+                choice.action();
+            });
+        };
+        choicesDiv.appendChild(btn);
+    });
+    showSkipHint(); // keep hint visible with choices
+}
 
-function showSkipHint() { skipHint.style.display = "block"; }
-function hideSkipHint() { skipHint.style.display = "none"; }
+function hideChoices() {
+    choicesDiv.innerHTML = "";
+}
 
 // =========================
 // ENTER KEY HANDLER
@@ -86,26 +111,6 @@ document.addEventListener("keydown", (e) => {
         }
     }
 });
-
-// =========================
-// CHOICES
-// =========================
-function showChoices(choices) {
-    choicesDiv.innerHTML = "";
-    choices.forEach(choice => {
-        const btn = document.createElement("button");
-        btn.textContent = choice.text;
-        btn.onclick = () => {
-            typeText(choice.response);
-            nextLineCallback = choice.action;
-        };
-        choicesDiv.appendChild(btn);
-    });
-}
-
-function hideChoices() {
-    choicesDiv.innerHTML = "";
-}
 
 // =========================
 // SCENES
