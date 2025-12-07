@@ -16,6 +16,60 @@ let waitingForEnter = false;
 let nextLineCallback = null;
 
 // =========================
+// STICK FIGURES
+// =========================
+const stickFigures = {
+    scene1: `
+   o
+  /|\\
+  / \\
+ (You walking)
+    `,
+    scene2: `
+   o
+  /|\\
+  / \\
+ (NPC2 greeting)
+    `,
+    sceneNPC3: `
+   o
+  /|\\
+  / \\
+ (NPC3 selling)
+    `,
+    scene3: `
+   o
+  /|\\
+  / \\
+ (Courthouse)
+    `,
+    scene4Normal: `
+   o
+  /|\\
+  / \\
+ (Evening saloon)
+    `,
+    scene4NPC1Followup: `
+   o
+  /|\\
+  / \\
+ (NPC1 bruised)
+    `,
+    sceneBattle: `
+ o   o
+/|\\ /|\\
+/ \\ / \\
+(Battle)
+    `,
+    finalScene: `
+   o
+  /|\\
+  / \\
+ (Reflection)
+    `
+};
+
+// =========================
 // SKIP HINT
 // =========================
 const skipHint = document.createElement("p");
@@ -41,24 +95,30 @@ startBtn.addEventListener("click", () => {
 // =========================
 // TYPEWRITER TEXT
 // =========================
-function typeText(text, callback) {
+function typeText(text, stick, callback) {
     typing = true;
     skipTyping = false;
     waitingForEnter = false;
     textBox.innerHTML = "";
 
-    hideChoices(); // always hide buttons while typing
-    showSkipHint(); // show hint while typing
+    hideChoices();
+    showSkipHint();
+
+    textBox.innerHTML = `<pre style="color: green; text-align:center;">${stick}</pre>\n<div class="text-box-inner">${text}</div>`;
 
     let i = 0;
     const speed = 25;
+    const innerDiv = textBox.querySelector(".text-box-inner");
+    const fullText = text;
+
+    innerDiv.innerHTML = "";
 
     function type() {
-        if (i < text.length) {
-            textBox.innerHTML += text.charAt(i);
+        if (i < fullText.length) {
+            innerDiv.innerHTML += fullText.charAt(i);
             i++;
             if (skipTyping) {
-                textBox.innerHTML = text;
+                innerDiv.innerHTML = fullText;
                 typing = false;
                 waitingForEnter = true;
                 nextLineCallback = callback;
@@ -78,15 +138,15 @@ function typeText(text, callback) {
 // CHOICES
 // =========================
 function showChoices(choices) {
-    hideSkipHint(); // hide hint when choices appear
-    waitingForEnter = false; // no waiting when choices are visible
+    hideSkipHint();
+    waitingForEnter = false;
     choicesDiv.innerHTML = "";
     choices.forEach(choice => {
         const btn = document.createElement("button");
         btn.textContent = choice.text;
         btn.className = "choice-btn";
         btn.onclick = () => {
-            typeText(choice.response, () => choice.action());
+            typeText(choice.response, "", () => choice.action());
         };
         choicesDiv.appendChild(btn);
     });
@@ -100,16 +160,15 @@ function hideChoices() { choicesDiv.innerHTML = ""; }
 document.addEventListener("keydown", (e) => {
     if (e.key === "Enter") {
         if (typing) {
-            skipTyping = true; // skip current text
+            skipTyping = true;
         } else if (waitingForEnter && nextLineCallback) {
             const cb = nextLineCallback;
             nextLineCallback = null;
             waitingForEnter = false;
-            cb(); // go to next line
+            cb();
         }
     }
 });
-
 
 // =========================
 // SCENES
@@ -128,8 +187,7 @@ function scene1() {
     let i = 0;
     function nextLine() {
         if (i < lines.length) {
-            nextLineCallback = nextLine;
-            typeText(lines[i], nextLine);
+            typeText(lines[i], stickFigures.scene1, nextLine);
             i++;
         } else {
             showChoices([
@@ -153,8 +211,7 @@ function scene2() {
     let i = 0;
     function nextLine() {
         if (i < lines.length) {
-            nextLineCallback = nextLine;
-            typeText(lines[i], nextLine);
+            typeText(lines[i], stickFigures.scene2, nextLine);
             i++;
         } else {
             showChoices([
@@ -176,8 +233,7 @@ function sceneNPC3() {
     let i = 0;
     function nextLine() {
         if (i < lines.length) {
-            nextLineCallback = nextLine;
-            typeText(lines[i], nextLine);
+            typeText(lines[i], stickFigures.sceneNPC3, nextLine);
             i++;
         } else {
             showChoices([
@@ -202,8 +258,7 @@ function scene3() {
     let i = 0;
     function nextLine() {
         if (i < lines.length) {
-            nextLineCallback = nextLine;
-            typeText(lines[i], nextLine);
+            typeText(lines[i], stickFigures.scene3, nextLine);
             i++;
         } else {
             showChoices([
@@ -218,7 +273,7 @@ function scene3() {
 }
 
 function scene4Normal() {
-    typeText("Evening outside the saloon. NPC2 reads a notice about an expedition.", () => {
+    typeText("Evening outside the saloon. NPC2 reads a notice about an expedition.", stickFigures.scene4Normal, () => {
         showChoices([
             { text: "Join fully", response: "You join the expedition fully.", action: sceneBattle },
             { text: "Refuse", response: "You refuse. Nothing changes today.", action: () => endGame("You refused the expedition. Nothing changes today.") },
@@ -228,7 +283,7 @@ function scene4Normal() {
 }
 
 function scene4NPC1Followup() {
-    typeText("NPC1 approaches you later that day, covered in scratches and bruises.", () => {
+    typeText("NPC1 approaches you later that day, covered in scratches and bruises.", stickFigures.scene4NPC1Followup, () => {
         showChoices([
             { text: "Blame him", response: "Distance grows between you and NPC1. NPC1 leaves.", action: scene4Normal },
             { text: "Promise to testify for him", response: "NPC1 thanks you sincerely.", action: scene4Normal },
@@ -246,8 +301,7 @@ function sceneBattle() {
     let i = 0;
     function nextLine() {
         if (i < lines.length) {
-            nextLineCallback = nextLine;
-            typeText(lines[i], nextLine);
+            typeText(lines[i], stickFigures.sceneBattle, nextLine);
             i++;
         } else {
             showChoices([
@@ -270,8 +324,7 @@ function finalScene() {
     let i = 0;
     function nextReflection() {
         if (i < reflectionLines.length) {
-            nextLineCallback = nextReflection;
-            typeText(reflectionLines[i], nextReflection);
+            typeText(reflectionLines[i], stickFigures.finalScene, nextReflection);
             i++;
         } else {
             endGame("=== THE END ===");
@@ -281,7 +334,7 @@ function finalScene() {
 }
 
 function endGame(message) {
-    typeText(message);
+    typeText(message, stickFigures.finalScene);
     hideChoices();
     nextLineCallback = null;
 }
