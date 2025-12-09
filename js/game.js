@@ -236,7 +236,6 @@ function scene1() {
     let i = 0;
     function nextLine() {
         if (i < lines.length) {
-            nextLineCallback = nextLine;
             typeText(lines[i], nextLine);
             i++;
         } else {
@@ -287,7 +286,6 @@ function scene2() {
     let i = 0;
     function nextLine() {
         if (i < lines.length) {
-            nextLineCallback = nextLine;
             typeText(lines[i], nextLine);
             i++;
         } else {
@@ -327,7 +325,6 @@ function npc3Scene() {
     let i = 0;
     function nextLine() {
         if (i < lines.length) {
-            nextLineCallback = nextLine;
             typeText(lines[i], nextLine);
             i++;
         } else {
@@ -378,7 +375,6 @@ function scene3() {
     let i = 0;
     function nextLine() {
         if (i < lines.length) {
-            nextLineCallback = nextLine;
             typeText(lines[i], nextLine);
             i++;
         } else {
@@ -410,7 +406,6 @@ function sceneCoercion() {
     let i = 0;
     function nextLine() {
         if (i < lines.length) {
-            nextLineCallback = nextLine;
             typeText(lines[i], nextLine);
             i++;
         } else {
@@ -456,7 +451,6 @@ function sceneCoercion() {
         let i = 0;
         function nextLine() {
             if (i < lines.length) {
-                nextLineCallback = nextLine;
                 typeText(lines[i], nextLine);
                 i++;
             } else {
@@ -478,7 +472,6 @@ function sceneCoercion() {
         let i = 0;
         function nextLine() {
             if (i < lines.length) {
-                nextLineCallback = nextLine;
                 typeText(lines[i], nextLine);
                 i++;
             } else {
@@ -515,7 +508,6 @@ function sceneCoercion() {
         let i = 0;
         function nextLine() {
             if (i < lines.length) {
-                nextLineCallback = nextLine;
                 typeText(lines[i], nextLine);
                 i++;
             } else {
@@ -560,7 +552,6 @@ function sceneCoercion() {
         let i = 0;
         function nextLine() {
             if (i < lines.length) {
-                nextLineCallback = nextLine;
                 typeText(lines[i], nextLine);
                 i++;
             } else {
