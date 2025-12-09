@@ -131,7 +131,7 @@ document.addEventListener("DOMContentLoaded", () => {
         showSkipHint();
         let i = 0;
         const speed = 26;
-
+        textBox.style.color = "#f2e6c9"
         function step(){
             if(skipTyping){
                 textBox.innerHTML = text;
@@ -208,15 +208,11 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     
-    function drawBackground(){clearScene();const g=ctx.createLinearGradient(0,0,0,canvas.height);g.addColorStop(0,"#a8d8ff");g.addColorStop(0.6,"#cfeefc");g.addColorStop(1,"#e8f7ee");ctx.fillStyle=g;ctx.fillRect(0,0,canvas.width,canvas.height);ctx.fillStyle="#ffd24d";ctx.beginPath();ctx.arc(700,70,28,0,Math.PI*2);ctx.fill();ctx.fillStyle="#6a8a3f";ctx.beginPath();ctx.moveTo(0,260);ctx.quadraticCurveTo(200,200,380,260);ctx.quadraticCurveTo(520,300,800,260);ctx.lineTo(800,400);ctx.lineTo(0,400);ctx.fill();ctx.fillStyle="#3a7b2f";ctx.beginPath();ctx.moveTo(0,300);ctx.quadraticCurveTo(180,250,360,300);ctx.quadraticCurveTo(520,350,800,300);ctx.lineTo(800,400);ctx.lineTo(0,400);ctx.fill();ctx.fillStyle="#d6b98a";ctx.beginPath();ctx.moveTo(40,360);ctx.quadraticCurveTo(200,320,360,360);ctx.quadraticCurveTo(520,400,760,360);ctx.lineTo(760,390);ctx.quadraticCurveTo(520,410,360,390);ctx.quadraticCurveTo(200,370,40,390);ctx.closePath();ctx.fill();ctx.fillStyle="#4aa3ff";ctx.beginPath();ctx.moveTo(120,320);ctx.quadraticCurveTo(220,280,360,320);ctx.quadraticCurveTo(500,360,680,320);ctx.lineTo(680,360);ctx.quadraticCurveTo(500,400,360,360);ctx.quadraticCurveTo(220,320,120,360);ctx.closePath();ctx.fill();ctx.fillStyle="#79c25e";ctx.fillRect(0,360,canvas.width,40);drawHUD()}
     function drawCourthouseInterior(){clearScene();ctx.fillStyle="#2b2317";ctx.fillRect(0,0,canvas.width,canvas.height);ctx.fillStyle="rgba(255,255,220,0.08)";ctx.fillRect(60,40,120,300);ctx.fillRect(620,40,120,300);ctx.fillStyle="#3b2d20";ctx.fillRect(260,40,280,40);ctx.fillStyle="#cfa06d";ctx.fillRect(260,80,280,10);ctx.fillStyle="#3b2d20";for(let r=0;r<3;r++)ctx.fillRect(80,120+r*40,640,18);ctx.fillStyle="#8b6b4a";ctx.fillRect(360,160,80,14);const g=ctx.createRadialGradient(400,70,10,400,70,220);g.addColorStop(0,"rgba(255,255,220,0.35)");g.addColorStop(1,"rgba(0,0,0,0)");ctx.fillStyle=g;ctx.fillRect(0,0,canvas.width,canvas.height);drawHUD()}
     function drawTree(x,y,s=18){ctx.fillStyle="#2f7b2a";ctx.beginPath();ctx.moveTo(x,y-s);ctx.lineTo(x-s,y+s/2);ctx.lineTo(x+s,y+s/2);ctx.closePath();ctx.fill();ctx.fillStyle="#6b3e1f";ctx.fillRect(x-Math.floor(s/6),y+s/2,Math.floor(s/3),Math.floor(s/2))}
     function drawHouse(x,y,w=48,h=36){ctx.fillStyle="#7a4a22";ctx.fillRect(x,y,w,h);ctx.fillStyle="#9b2b2b";ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x+w/2,y-h/2);ctx.lineTo(x+w,y);ctx.closePath();ctx.fill()}
     function drawTent(x,y,w=40,h=30){ctx.fillStyle="#ff6b4b";ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x-w/2,y+h);ctx.lineTo(x+w/2,y+h);ctx.closePath();ctx.fill();ctx.fillStyle="#a2412a";ctx.fillRect(x-2,y+h-6,4,6)}
     function drawCharacter(x,y,skin="#f1d1bb",clothes="#4a9",hat=false,tool=false,bag=false,scale=1){const s=Math.round(CHAR_SIZE*scale);ctx.fillStyle=skin;ctx.fillRect(x,y,s,s);ctx.fillStyle=clothes;ctx.fillRect(x,y+s,s,Math.round(s*1.6));ctx.fillRect(x-Math.round(s/2),y+s,Math.round(s/2),Math.round(s*1.2));ctx.fillRect(x+s,y+s,Math.round(s/2),Math.round(s*1.2));ctx.fillRect(x,y+Math.round(s*2.6),Math.round(s/2),Math.round(s*1.4));ctx.fillRect(x+Math.round(s/2),y+Math.round(s*2.6),Math.round(s/2),Math.round(s*1.4));if(hat){ctx.fillStyle="#7a4a22";ctx.fillRect(x-Math.round(s/6),y-Math.round(s/4),Math.round(s*1.3),Math.round(s/4))}if(tool){ctx.fillStyle="#8a8a8a";ctx.fillRect(x+s,y+s,Math.max(3,Math.round(s*0.3)),Math.round(s*1.0))}if(bag){ctx.fillStyle="#8a6b42";ctx.fillRect(x-Math.round(s/2),y+s,Math.round(s/2),Math.round(s*0.8))}}
-
-    function typeText(text,onComplete){typing=true;skipTyping=false;waitingForEnter=false;textBox.innerHTML="";hideChoices();showSkipHint();let i=0;const speed=26;function step(){if(skipTyping){textBox.innerHTML=text;finish();return}if(i<text.length){textBox.innerHTML+=text.charAt(i);i++;updateHUD();setTimeout(step,speed)}else finish()}function finish(){typing=false;waitingForEnter=true;nextLineCallback=onComplete;updateHUD()}step()}
-
 
     function scene1Visual(){drawBackground();drawCharacter(150,240,"#f1d1bb","#4ac",true,true,true);drawCharacter(260,240,"#f1d1bb","#6f4",true,false,true);drawHouse(520,260);drawTree(670,240,22);drawTree(90,250,22);drawHUD()}
     function scene2Visual(){drawBackground();drawCharacter(140,240,"#f1d1bb","#4ac",true,true,true);drawCharacter(300,240,"#f1d1bb","#b85",true,false,true);drawHouse(460,260);drawTent(600,250);drawTree(360,250,20);drawTree(720,260,18);drawHUD()}
