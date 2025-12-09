@@ -6,11 +6,15 @@ document.addEventListener("DOMContentLoaded", () => {
     const choicesDiv = document.getElementById("choices");
     const canvas = document.getElementById("scene-canvas");
     const ctx = canvas.getContext("2d");
+
     let typing = false, skipTyping = false, waitingForEnter = false, nextLineCallback = null;
     let gold = 0, morality = 0, choicesLog = [];
+
     const CHAR_SIZE = 16;
-    const GROUND_Y = 360
+    const GROUND_Y = 360;
     const HUD = {x:10,y:10,width:180,height:50,padding:8,bgColor:"rgba(0,0,0,0.5)",borderColor:"#d4aa70",borderWidth:2,textColor:"#fff",font:"16px monospace"};
+
+    // ---------------- HUD ----------------
     function drawHUD(){
         ctx.fillStyle = HUD.bgColor;
         ctx.fillRect(HUD.x, HUD.y, HUD.width, HUD.height);
@@ -27,22 +31,20 @@ document.addEventListener("DOMContentLoaded", () => {
     function updateHUD(){ drawHUD(); }
     function clearScene(){ ctx.clearRect(0,0,canvas.width,canvas.height); }
 
-    // ------------------------
-    // CHOICES WITH FADE-IN
-    // ------------------------
+    // ---------------- Choices ----------------
     function showChoices(list) {
         choicesDiv.innerHTML = "";
         hideSkipHint();
         waitingForEnter = false;
 
-        // Center and style container
         choicesDiv.style.display = "flex";
         choicesDiv.style.justifyContent = "center";
         choicesDiv.style.flexWrap = "wrap";
         choicesDiv.style.marginTop = "10px";
         choicesDiv.style.gap = "10px";
+        choicesDiv.style.zIndex = 1000;
+        choicesDiv.style.position = "relative";
 
-        // Add buttons
         list.forEach(choice => {
             const btn = document.createElement("button");
             btn.textContent = choice.text;
@@ -50,22 +52,17 @@ document.addEventListener("DOMContentLoaded", () => {
             btn.style.transition = "opacity 0.4s ease";
             btn.addEventListener("click", () => {
                 hideChoices();
-                choice.callback();
+                if(choice.callback) choice.callback();
+                else if(choice.action) choice.action();
             });
             choicesDiv.appendChild(btn);
-
-            // Trigger fade-in
             requestAnimationFrame(() => { btn.style.opacity = 1; });
         });
     }
 
-    function hideChoices() {
-        choicesDiv.innerHTML = "";
-    }
+    function hideChoices() { choicesDiv.innerHTML = ""; }
 
-    // ------------------------
-    // VISUALS / DRAW FUNCTIONS
-    // ------------------------
+    // ---------------- Background / Scene ----------------
     function drawBackground(){
         clearScene();
         const g = ctx.createLinearGradient(0,0,0,canvas.height);
@@ -74,10 +71,12 @@ document.addEventListener("DOMContentLoaded", () => {
         g.addColorStop(1,"#e8f7ee");
         ctx.fillStyle = g;
         ctx.fillRect(0,0,canvas.width,canvas.height);
+
         ctx.fillStyle = "#ffd24d";
         ctx.beginPath();
         ctx.arc(700,70,28,0,Math.PI*2);
         ctx.fill();
+
         ctx.fillStyle="#6a8a3f";
         ctx.beginPath();
         ctx.moveTo(0,260);
@@ -86,6 +85,7 @@ document.addEventListener("DOMContentLoaded", () => {
         ctx.lineTo(800,400);
         ctx.lineTo(0,400);
         ctx.fill();
+
         ctx.fillStyle="#3a7b2f";
         ctx.beginPath();
         ctx.moveTo(0,300);
@@ -94,6 +94,7 @@ document.addEventListener("DOMContentLoaded", () => {
         ctx.lineTo(800,400);
         ctx.lineTo(0,400);
         ctx.fill();
+
         ctx.fillStyle="#d6b98a";
         ctx.beginPath();
         ctx.moveTo(40,360);
@@ -104,6 +105,7 @@ document.addEventListener("DOMContentLoaded", () => {
         ctx.quadraticCurveTo(200,370,40,390);
         ctx.closePath();
         ctx.fill();
+
         ctx.fillStyle="#4aa3ff";
         ctx.beginPath();
         ctx.moveTo(120,320);
@@ -114,204 +116,52 @@ document.addEventListener("DOMContentLoaded", () => {
         ctx.quadraticCurveTo(220,320,120,360);
         ctx.closePath();
         ctx.fill();
+
         ctx.fillStyle="#79c25e";
         ctx.fillRect(0,360,canvas.width,40);
+
         drawHUD();
     }
+
+    // ---------------- Ground Helper ----------------
     function getGroundY(x, layer="foreground") {
-    // Default flat ground
-    let y = 360; 
-
-    if(layer === "hills") {
-        // Green hills layer
-        if(x <= 380) {
-            // Left curve: quadratic (0,260) -> control(200,200) -> (380,260)
-            const t = (x-0)/380;
-            y = (1-t)*(1-t)*260 + 2*(1-t)*t*200 + t*t*260;
-        } else if(x <= 520) {
-            // Middle curve: (380,260) -> control(520,300) -> (520,?) approx linear
-            const t = (x-380)/(520-380);
-            y = (1-t)*(260) + t*(300);
-        } else {
-            // Right slope to 800,260
-            const t = (x-520)/(800-520);
-            y = (1-t)*300 + t*260;
+        let y = 360;
+        if(layer === "hills") {
+            if(x <= 380){ const t = (x-0)/380; y=(1-t)*(1-t)*260+2*(1-t)*t*200+t*t*260; }
+            else if(x <= 520){ const t = (x-380)/(520-380); y=(1-t)*260+t*300; }
+            else{ const t = (x-520)/(800-520); y=(1-t)*300+t*260; }
+        } else if(layer === "foreground"){
+            if(x<=40) y=390; else if(x<=200){ const t=(x-40)/(200-40); y=(1-t)*390+t*370; }
+            else if(x<=360){ const t=(x-200)/(360-200); y=(1-t)*370+t*390; }
+            else if(x<=520){ const t=(x-360)/(520-360); y=(1-t)*390+t*410; }
+            else if(x<=760){ const t=(x-520)/(760-520); y=(1-t)*410+t*390; }
+            else y=390;
+        } else if(layer==="river"){
+            if(x<=220){ const t=(x-120)/(220-120); y=(1-t)*360+t*280; }
+            else if(x<=360){ const t=(x-220)/(360-220); y=(1-t)*280+t*320; }
+            else if(x<=500){ const t=(x-360)/(500-360); y=(1-t)*320+t*360; }
+            else if(x<=680){ const t=(x-500)/(680-500); y=(1-t)*360+t*320; }
+            else y=320;
         }
-    } else if(layer === "foreground") {
-        // Foreground grass layer (flat-ish)
-        if(x >= 0 && x <= 40) y = 390;
-        else if(x >= 40 && x <= 200) {
-            const t = (x-40)/(200-40);
-            y = (1-t)*390 + t*370;
-        } else if(x >= 200 && x <= 360) {
-            const t = (x-200)/(360-200);
-            y = (1-t)*370 + t*390;
-        } else if(x >= 360 && x <= 520) {
-            const t = (x-360)/(520-360);
-            y = (1-t)*390 + t*410;
-        } else if(x >= 520 && x <= 760) {
-            const t = (x-520)/(760-520);
-            y = (1-t)*410 + t*390;
-        } else {
-            y = 390;
-        }
-    } else if(layer === "river") {
-        // Blue river layer
-        if(x <= 220) {
-            const t = (x-120)/(220-120);
-            y = (1-t)*360 + t*280;
-        } else if(x <= 360) {
-            const t = (x-220)/(360-220);
-            y = (1-t)*280 + t*320;
-        } else if(x <= 500) {
-            const t = (x-360)/(500-360);
-            y = (1-t)*320 + t*360;
-        } else if(x <= 680) {
-            const t = (x-500)/(680-500);
-            y = (1-t)*360 + t*320;
-        } else {
-            y = 320;
-        }
+        return y;
     }
 
-    return y;
-}
-
-    // ------------------------
-    // TYPING TEXT LOGIC
-    // ------------------------
-    function typeText(text,onComplete){
-        typing = true;
-        skipTyping = false;
-        waitingForEnter = false;
-        textBox.innerHTML = "";
-        hideChoices();
-        showSkipHint();
-        let i = 0;
-        const speed = 26;
-        textBox.style.color = "#f2e6c9"
-        function step(){
-            if(skipTyping){
-                textBox.innerHTML = text;
-                finish();
-                return;
-            }
-            if(i < text.length){
-                textBox.innerHTML += text.charAt(i);
-                i++;
-                updateHUD();
-                setTimeout(step, speed);
-            } else finish();
-        }
-
-        function finish(){
-            typing = false;
-            waitingForEnter = true;
-            nextLineCallback = onComplete;
-            updateHUD();
-        }
-
-        step();
-    }
-
-    // ------------------------
-    // SKIP HINT
-    // ------------------------
-    const skipHint = document.createElement("p");
-    skipHint.style.cssText = `
-        color:#d4aa70;
-        font-size:14px;
-        margin-top:8px;
-        font-family:'Kalam',cursive;
-        text-align:center;
-    `;
-    skipHint.innerText = "Press ENTER to continue";
-    skipHint.style.display = "none";
-
-    function showSkipHint(){
-        skipHint.style.display = "block";
-        if(!gameScreen.contains(skipHint)) gameScreen.appendChild(skipHint);
-    }
-    function hideSkipHint(){ skipHint.style.display = "none"; }
-
-    // ------------------------
-    // EVENT LISTENERS
-    // ------------------------
-    document.addEventListener("keydown", e => {
-        if(e.key === "Enter"){
-            if(typing) skipTyping = true;
-            else if(waitingForEnter && nextLineCallback){
-                const fn = nextLineCallback;
-                nextLineCallback = null;
-                waitingForEnter = false;
-                fn();
-            }
-        }
-    });
-
-    const bgMusic = new Audio("audio/a-beautiful-morning-174653.mp3");
-    bgMusic.volume = 0.2;
-    bgMusic.loop = true;
-    //----------------------
-    // AUDIO SETUP
-    // --------------------
-
-    startBtn.addEventListener("click", () => {
-        titleScreen.style.display = "none";
-        gameScreen.style.display = "block";
-        // Play music once the user interacts
-        bgMusic.play().catch(e => console.log("Music play prevented:", e));
-
-        scene1();
-    });
-
-        
-    function drawCourthouseInterior(){
-        clearScene();
-        
-        // walls + columns
-        ctx.fillStyle="#2b2317";
-        ctx.fillRect(0,0,canvas.width,canvas.height);
-
-        ctx.fillStyle="rgba(255,255,220,0.08)";
-        ctx.fillRect(60,40,120,300);
-        ctx.fillRect(620,40,120,300);
-
-        // judge platform
-        ctx.fillStyle="#3b2d20";
-        ctx.fillRect(260,40,280,40);
-        ctx.fillStyle="#cfa06d";
-        ctx.fillRect(260,80,280,10);
-
-        // railing rows
-        ctx.fillStyle="#3b2d20";
-        for(let r=0;r<3;r++) ctx.fillRect(80,120+r*40,640,18);
-
-        // bench highlight glow
-        const g=ctx.createRadialGradient(400,70,10,400,70,220);
-        g.addColorStop(0,"rgba(255,255,220,0.35)");
-        g.addColorStop(1,"rgba(0,0,0,0)");
-        ctx.fillStyle=g;
-        ctx.fillRect(0,0,canvas.width,canvas.height);
-
-        drawHUD();
-    }
-
+    // ---------------- Draw Objects ----------------
     function drawTree(x,s=18,layer="foreground"){
-    const y = getGroundY(x, layer) - s; // tree trunk stands on ground
-    ctx.fillStyle="#2f7b2a";
-    ctx.beginPath();
-    ctx.moveTo(x,y-s);
-    ctx.lineTo(x-s,y+s/2);
-    ctx.lineTo(x+s,y+s/2);
-    ctx.closePath();
-    ctx.fill();
-    ctx.fillStyle="#6b3e1f";
-    ctx.fillRect(x-Math.floor(s/6),y+s/2,Math.floor(s/3),Math.floor(s/2));
-}
+        const y = getGroundY(x, layer)-s;
+        ctx.fillStyle="#2f7b2a";
+        ctx.beginPath();
+        ctx.moveTo(x,y-s);
+        ctx.lineTo(x-s,y+s/2);
+        ctx.lineTo(x+s,y+s/2);
+        ctx.closePath();
+        ctx.fill();
+        ctx.fillStyle="#6b3e1f";
+        ctx.fillRect(x-Math.floor(s/6),y+s/2,Math.floor(s/3),Math.floor(s/2));
+    }
 
     function drawHouse(x,w=48,h=36,layer="foreground"){
-        const y = getGroundY(x, layer) - h;
+        const y=getGroundY(x,layer)-h;
         ctx.fillStyle="#7a4a22";
         ctx.fillRect(x,y,w,h);
         ctx.fillStyle="#9b2b2b";
@@ -324,7 +174,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function drawTent(x,w=40,h=30,layer="foreground"){
-        const y = getGroundY(x, layer) - h;
+        const y=getGroundY(x,layer)-h;
         ctx.fillStyle="#ff6b4b";
         ctx.beginPath();
         ctx.moveTo(x,y);
@@ -338,9 +188,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function drawCharacter(x,skin="#f1d1bb",clothes="#4a9",hat=false,tool=false,bag=false,scale=1,layer="foreground"){
         const s=Math.round(CHAR_SIZE*scale);
-        const y = getGroundY(x, layer) - Math.round(s*2.8);
-        ctx.fillStyle=skin;
-        ctx.fillRect(x,y,s,s);
+        const y=getGroundY(x,layer)-Math.round(s*2.8);
+        ctx.fillStyle=skin; ctx.fillRect(x,y,s,s);
         ctx.fillStyle=clothes;
         ctx.fillRect(x,y+s,s,Math.round(s*1.6));
         ctx.fillRect(x-Math.round(s/2),y+s,Math.round(s/2),Math.round(s*1.2));
@@ -352,32 +201,33 @@ document.addEventListener("DOMContentLoaded", () => {
         if(bag){ctx.fillStyle="#8a6b42";ctx.fillRect(x-Math.round(s/2),y+s,Math.round(s/2),Math.round(s*0.8))}
     }
 
+    // ---------------- Scene Visuals with adjusted positions ----------------
     function scene1Visual(){
         drawBackground();
-        drawCharacter(150,"#f1d1bb","#4a9",false,false,false,1,"foreground");
+        drawCharacter(140,"#f1d1bb","#4a9",false,false,false,1,"foreground");
         drawCharacter(260,"#f1d1bb","#4a9",false,false,false,1,"foreground");
         drawHouse(520,48,36,"foreground");
-        drawTree(670,22,"hills");
-        drawTree(90,22,"hills");
+        drawTree(680,22,"hills");
+        drawTree(100,22,"hills");
     }
 
     function scene2Visual(){
         drawBackground();
-        drawCharacter(140,"#f1d1bb","#4a9",false,false,false,1,"foreground");
-        drawCharacter(300,"#f1d1bb","#4a9",false,false,false,1,"foreground");
-        drawHouse(460,48,36,"foreground");
-        drawTent(600,40,30,"river");
-        drawTree(360,20,"hills");
-        drawTree(720,18,"hills");
+        drawCharacter(130,"#f1d1bb","#4a9",false,false,false,1,"foreground");
+        drawCharacter(310,"#f1d1bb","#4a9",false,false,false,1,"foreground");
+        drawHouse(470,48,36,"foreground");
+        drawTent(610,40,30,"river");
+        drawTree(370,20,"hills");
+        drawTree(730,18,"hills");
     }
 
     function npc3Visual(){
         drawBackground();
-        drawCharacter(160,"#f1d1bb","#4a9",false,false,false,1,"foreground");
-        drawCharacter(280,"#f1d1bb","#4a9",false,false,false,1,"foreground");
-        drawTent(600,40,30,"river");
-        drawTree(420,20,"hills");
-        drawTree(720,18,"hills");
+        drawCharacter(150,"#f1d1bb","#4a9",false,false,false,1,"foreground");
+        drawCharacter(290,"#f1d1bb","#4a9",false,false,false,1,"foreground");
+        drawTent(610,40,30,"river");
+        drawTree(430,20,"hills");
+        drawTree(730,18,"hills");
     }
 
     function scene3Visual(){
@@ -429,6 +279,59 @@ document.addEventListener("DOMContentLoaded", () => {
         drawTent(620,40,30,"river");
         drawHouse(400,48,36,"foreground");
     }
+
+    // ---------------- Skip Hint ----------------
+    const skipHint = document.createElement("p");
+    skipHint.style.cssText = `color:#d4aa70;font-size:14px;margin-top:8px;font-family:'Kalam',cursive;text-align:center;`;
+    skipHint.innerText = "Press ENTER to continue";
+    skipHint.style.display = "none";
+
+    function showSkipHint(){ skipHint.style.display = "block"; if(!gameScreen.contains(skipHint)) gameScreen.appendChild(skipHint);}
+    function hideSkipHint(){ skipHint.style.display = "none"; }
+
+    // ---------------- Typing ----------------
+    function typeText(text,onComplete){
+        typing=true; skipTyping=false; waitingForEnter=false; textBox.innerHTML=""; hideChoices(); showSkipHint();
+        let i=0; const speed=26; textBox.style.color="#f2e6c9";
+        function step(){
+            if(skipTyping){ textBox.innerHTML=text; finish(); return; }
+            if(i<text.length){ textBox.innerHTML+=text.charAt(i); i++; updateHUD(); setTimeout(step,speed); }
+            else finish();
+        }
+        function finish(){ typing=false; waitingForEnter=true; nextLineCallback=onComplete; updateHUD(); }
+        step();
+    }
+
+    document.addEventListener("keydown", e => {
+        if(e.key==="Enter"){
+            if(typing) skipTyping=true;
+            else if(waitingForEnter && nextLineCallback){ const fn=nextLineCallback; nextLineCallback=null; waitingForEnter=false; fn(); }
+        }
+    });
+
+    // ---------------- Start ----------------
+    const bgMusic = new Audio("audio/a-beautiful-morning-174653.mp3");
+    bgMusic.volume = 0.2; bgMusic.loop = true;
+
+    startBtn.addEventListener("click", () => {
+        titleScreen.style.display="none";
+        gameScreen.style.display="block";
+        bgMusic.play().catch(e=>console.log("Music play prevented:",e));
+        scene1();
+    });
+
+    // ---------------- Courthouse Interior ----------------
+    function drawCourthouseInterior(){
+        clearScene();
+        ctx.fillStyle="#2b2317"; ctx.fillRect(0,0,canvas.width,canvas.height);
+        ctx.fillStyle="rgba(255,255,220,0.08)"; ctx.fillRect(60,40,120,300); ctx.fillRect(620,40,120,300);
+        ctx.fillStyle="#3b2d20"; ctx.fillRect(260,40,280,40);
+        ctx.fillStyle="#cfa06d"; ctx.fillRect(260,80,280,10);
+        ctx.fillStyle="#3b2d20"; for(let r=0;r<3;r++) ctx.fillRect(80,120+r*40,640,18);
+        const g=ctx.createRadialGradient(400,70,10,400,70,220); g.addColorStop(0,"rgba(255,255,220,0.35)"); g.addColorStop(1,"rgba(0,0,0,0)"); ctx.fillStyle=g; ctx.fillRect(0,0,canvas.width,canvas.height);
+        drawHUD();
+    }
+
 
     // =========================
     // NAMES MAPPING
