@@ -214,26 +214,92 @@ document.addEventListener("DOMContentLoaded", () => {
     function drawTent(x,y,w=40,h=30){ctx.fillStyle="#ff6b4b";ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x-w/2,y+h);ctx.lineTo(x+w/2,y+h);ctx.closePath();ctx.fill();ctx.fillStyle="#a2412a";ctx.fillRect(x-2,y+h-6,4,6)}
     function drawCharacter(x,y,skin="#f1d1bb",clothes="#4a9",hat=false,tool=false,bag=false,scale=1){const s=Math.round(CHAR_SIZE*scale);ctx.fillStyle=skin;ctx.fillRect(x,y,s,s);ctx.fillStyle=clothes;ctx.fillRect(x,y+s,s,Math.round(s*1.6));ctx.fillRect(x-Math.round(s/2),y+s,Math.round(s/2),Math.round(s*1.2));ctx.fillRect(x+s,y+s,Math.round(s/2),Math.round(s*1.2));ctx.fillRect(x,y+Math.round(s*2.6),Math.round(s/2),Math.round(s*1.4));ctx.fillRect(x+Math.round(s/2),y+Math.round(s*2.6),Math.round(s/2),Math.round(s*1.4));if(hat){ctx.fillStyle="#7a4a22";ctx.fillRect(x-Math.round(s/6),y-Math.round(s/4),Math.round(s*1.3),Math.round(s/4))}if(tool){ctx.fillStyle="#8a8a8a";ctx.fillRect(x+s,y+s,Math.max(3,Math.round(s*0.3)),Math.round(s*1.0))}if(bag){ctx.fillStyle="#8a6b42";ctx.fillRect(x-Math.round(s/2),y+s,Math.round(s/2),Math.round(s*0.8))}}
 
-    function scene1Visual(){drawBackground();drawCharacter(150,240,"#f1d1bb","#4ac",true,true,true);drawCharacter(260,240,"#f1d1bb","#6f4",true,false,true);drawHouse(520,260);drawTree(670,240,22);drawTree(90,250,22);drawHUD()}
-    function scene2Visual(){drawBackground();drawCharacter(140,240,"#f1d1bb","#4ac",true,true,true);drawCharacter(300,240,"#f1d1bb","#b85",true,false,true);drawHouse(460,260);drawTent(600,250);drawTree(360,250,20);drawTree(720,260,18);drawHUD()}
-    function npc3Visual(){drawBackground();drawCharacter(160,240,"#f1d1bb","#4ac",true,true,true);drawCharacter(280,240,"#f1d1bb","#e96",true,false,true);drawTent(600,250);drawTree(420,250,20);drawTree(720,260,18);drawHUD()}
-    function scene3Visual(){drawBackground();drawCharacter(150,240,"#f1d1bb","#4ac",true,true,true);drawHouse(400,260);drawTent(600,250);drawTree(500,240,18);drawHUD()}
-    function courthouseVisual(){drawCourthouseInterior();drawCharacter(200,260,"#f1d1bb","#4ac",true,true,false);drawCharacter(400,260,"#f1d1bb","#b85",true,false,false);drawCharacter(600,260,"#f1d1bb","#e96",true,false,true);drawHUD()}
-    function josiahAndSolomonVisual(){drawBackground();drawCharacter(150,240,"#f1d1bb","#4ac",true,true,true);drawCharacter(200,260,"#f1d1bb","#4ac",false,false,true);drawCharacter(250,260,"#4a3426","#2b2b2b",false,false,false);drawCharacter(300,240,"#f1d1bb","#e96",false,false,false);drawHUD()}
-    function saloonVisual(){clearScene();ctx.fillStyle="#8b5e3c";ctx.fillRect(0,0,canvas.width,canvas.height);ctx.fillStyle="#5a3a21";ctx.fillRect(50,300,700,80);drawCharacter(150,240,"#f1d1bb","#4ac",true,true,false);drawCharacter(350,240,"#f1d1bb","#e96",true,false,true);drawCharacter(550,240,"#f1d1bb","#6f4",true,false,false);drawHUD()}
-    function battleVisual(){clearScene();ctx.fillStyle="#333";ctx.fillRect(0,0,canvas.width,canvas.height);ctx.fillStyle="#900";ctx.fillRect(0,300,canvas.width,100);drawCharacter(200,240,"#f1d1bb","#4ac",true,true,false);drawCharacter(500,240,"#f1d1bb","#e96",true,false,true);drawTent(400,250);drawTree(100,250,18);drawHUD()}
-    function finalVisual(){drawBackground();drawCharacter(150,240,"#f1d1bb","#4ac",true,true,true);drawTree(500,240,18);drawTent(620,250);drawHouse(400,260);drawHUD()}
+    function scene1Visual(){
+        drawBackground();
+        drawCharacter(150,280,"#f1d1bb","#4ac",true,true,true);
+        drawCharacter(260,280,"#f1d1bb","#6f4",true,false,true);
+        drawHouse(520,300);
+        drawTree(670,270,22);
+        drawTree(90,275,22);
+        drawHUD();
+    }
 
+    function scene2Visual(){
+        drawBackground();
+        drawCharacter(140,280,"#f1d1bb","#4ac",true,true,true);
+        drawCharacter(300,280,"#f1d1bb","#b85",true,false,true);
+        drawHouse(460,300);
+        drawTent(600,285);
+        drawTree(360,275,20);
+        drawTree(720,290,18);
+        drawHUD();
+    }
 
-function scene4NPC1FollowupVisual() {
-    drawBackground();
-    drawCharacter(110, 240, "#f1d1bb", "#4ac", false, true, true); // player
-    drawCharacter(230, 240, "#f1d1bb", "#c84", false, false, true); // Josiah
-    drawHouse(400, 260);
-    drawTree(550, 240, 18);
-    drawTent(600, 250);
-    drawHUD();
-}
+    function npc3Visual(){
+        drawBackground();
+        drawCharacter(160,280,"#f1d1bb","#4ac",true,true,true);
+        drawCharacter(280,280,"#f1d1bb","#e96",true,false,true);
+        drawTent(600,285);
+        drawTree(420,275,20);
+        drawTree(720,290,18);
+        drawHUD();
+    }
+
+    function scene3Visual(){
+        drawBackground();
+        drawCharacter(150,280,"#f1d1bb","#4ac",true,true,true);
+        drawHouse(400,300);
+        drawTent(600,285);
+        drawTree(500,270,18);
+        drawHUD();
+    }
+
+    function courthouseVisual(){
+        drawCourthouseInterior();
+        drawCharacter(200,300,"#f1d1bb","#4ac",true,true,false);
+        drawCharacter(400,300,"#f1d1bb","#b85",true,false,false);
+        drawCharacter(600,300,"#f1d1bb","#e96",true,false,true);
+        drawHUD();
+    }
+
+    function josiahAndSolomonVisual(){
+        drawBackground();
+        drawCharacter(150,280,"#f1d1bb","#4ac",true,true,true);
+        drawCharacter(200,300,"#f1d1bb","#4ac",false,false,true);
+        drawCharacter(250,300,"#4a3426","#2b2b2b",false,false,false);
+        drawCharacter(300,280,"#f1d1bb","#e96",false,false,false);
+        drawHUD();
+    }
+
+    function saloonVisual(){
+        clearScene();
+        ctx.fillStyle="#8b5e3c"; ctx.fillRect(0,0,canvas.width,canvas.height);
+        ctx.fillStyle="#5a3a21"; ctx.fillRect(50,300,700,80);
+        drawCharacter(150,280,"#f1d1bb","#4ac",true,true,false);
+        drawCharacter(350,280,"#f1d1bb","#e96",true,false,true);
+        drawCharacter(550,280,"#f1d1bb","#6f4",true,false,false);
+        drawHUD();
+    }
+
+    function battleVisual(){
+        clearScene();
+        ctx.fillStyle="#333"; ctx.fillRect(0,0,canvas.width,canvas.height);
+        ctx.fillStyle="#900"; ctx.fillRect(0,300,canvas.width,100);
+        drawCharacter(200,280,"#f1d1bb","#4ac",true,true,false);
+        drawCharacter(500,280,"#f1d1bb","#e96",true,false,true);
+        drawTent(400,285);
+        drawTree(100,275,18);
+        drawHUD();
+    }
+
+    function finalVisual(){
+        drawBackground();
+        drawCharacter(150,280,"#f1d1bb","#4ac",true,true,true);
+        drawTree(500,270,18);
+        drawTent(620,285);
+        drawHouse(400,300);
+        drawHUD();
+    }
 
     // =========================
     // NAMES MAPPING
