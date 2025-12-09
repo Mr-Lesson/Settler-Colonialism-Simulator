@@ -6,6 +6,38 @@ document.addEventListener("DOMContentLoaded", () => {
     const choicesDiv = document.getElementById("choices");
     const canvas = document.getElementById("scene-canvas");
     const ctx = canvas.getContext("2d");
+    const refBtn = document.getElementById("ref");
+
+    refBtn.addEventListener("click", () => {
+        // You can create a modal or just a div below the buttons
+        let modal = document.getElementById("references-modal");
+        if (!modal) {
+            modal = document.createElement("div");
+            modal.id = "references-modal";
+            modal.style.cssText = `
+                background: rgba(0,0,0,0.9);
+                color: #fff;
+                padding: 20px;
+                margin-top: 20px;
+                border: 2px solid #d4aa70;
+                max-width: 600px;
+                margin-left: auto;
+                margin-right: auto;
+            `;
+            modal.innerHTML = `
+                <h2>References</h2>
+                <ul>
+                    <li>Source 1</li>
+                    <li>Source 2</li>
+                    <li>Source 3</li>
+                </ul>
+            `;
+            titleScreen.appendChild(modal);
+        } else {
+            modal.remove(); // toggle off if clicked again
+        }
+    });
+
 
     let typing = false, skipTyping = false, waitingForEnter = false, nextLineCallback = null;
     let gold = 0, morality = 0, choicesLog = [];
