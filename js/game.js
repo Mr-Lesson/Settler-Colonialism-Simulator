@@ -14,7 +14,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const GROUND_Y = 360;
     const HUD = {x:10,y:10,width:180,height:50,padding:8,bgColor:"rgba(0,0,0,0.5)",borderColor:"#d4aa70",borderWidth:2,textColor:"#fff",font:"16px monospace"};
 
-    // ---------------- HUD ----------------
     function drawHUD(){
         ctx.fillStyle = HUD.bgColor;
         ctx.fillRect(HUD.x, HUD.y, HUD.width, HUD.height);
@@ -52,13 +51,12 @@ document.addEventListener("DOMContentLoaded", () => {
             btn.style.transition = "opacity 0.4s ease";
             btn.addEventListener("click", () => {
                 hideChoices();
-                if(choice.action) choice.action(); // ONLY call action
+                if(choice.action) choice.action();
             });
             choicesDiv.appendChild(btn);
             requestAnimationFrame(() => { btn.style.opacity = 1; });
         });
     }
-
 
     function hideChoices() { choicesDiv.innerHTML = ""; }
 
@@ -77,24 +75,20 @@ document.addEventListener("DOMContentLoaded", () => {
         ctx.arc(700,70,28,0,Math.PI*2);
         ctx.fill();
 
+        // Hills
         ctx.fillStyle="#6a8a3f";
         ctx.beginPath();
         ctx.moveTo(0,260);
-        ctx.quadraticCurveTo(200,200,380,260);
-        ctx.quadraticCurveTo(520,300,800,260);
-        ctx.lineTo(800,400);
-        ctx.lineTo(0,400);
-        ctx.fill();
+        ctx.bezierCurveTo(200,200,380,260,800,260);
+        ctx.lineTo(800,400); ctx.lineTo(0,400); ctx.fill();
 
         ctx.fillStyle="#3a7b2f";
         ctx.beginPath();
         ctx.moveTo(0,300);
-        ctx.quadraticCurveTo(180,250,360,300);
-        ctx.quadraticCurveTo(520,350,800,300);
-        ctx.lineTo(800,400);
-        ctx.lineTo(0,400);
-        ctx.fill();
+        ctx.bezierCurveTo(180,250,360,300,800,300);
+        ctx.lineTo(800,400); ctx.lineTo(0,400); ctx.fill();
 
+        // Foreground paths
         ctx.fillStyle="#d6b98a";
         ctx.beginPath();
         ctx.moveTo(40,360);
@@ -123,7 +117,6 @@ document.addEventListener("DOMContentLoaded", () => {
         drawHUD();
     }
 
-    // ---------------- Ground Helper ----------------
     function getGroundY(x, layer="foreground") {
         let y = 360;
         if(layer === "hills") {
@@ -147,23 +140,22 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // ---------------- Draw Objects ----------------
-    function drawTree(x,s=18,layer="foreground"){
+    function drawTree(x,s=22,layer="foreground"){
         const y = getGroundY(x, layer)-s;
         ctx.fillStyle="#2f7b2a";
         ctx.beginPath();
         ctx.moveTo(x,y-s);
-        ctx.lineTo(x-s,y+s/2);
-        ctx.lineTo(x+s,y+s/2);
+        ctx.lineTo(x-s/1.5,y+s/2);
+        ctx.lineTo(x+s/1.5,y+s/2);
         ctx.closePath();
         ctx.fill();
         ctx.fillStyle="#6b3e1f";
-        ctx.fillRect(x-Math.floor(s/6),y+s/2,Math.floor(s/3),Math.floor(s/2));
+        ctx.fillRect(x-Math.round(s/6),y+s/2,Math.round(s/3),Math.round(s/1.5));
     }
 
-    function drawHouse(x,w=48,h=36,layer="foreground"){
+    function drawHouse(x,w=50,h=40,layer="foreground"){
         const y=getGroundY(x,layer)-h;
-        ctx.fillStyle="#7a4a22";
-        ctx.fillRect(x,y,w,h);
+        ctx.fillStyle="#7a4a22"; ctx.fillRect(x,y,w,h);
         ctx.fillStyle="#9b2b2b";
         ctx.beginPath();
         ctx.moveTo(x,y);
@@ -171,9 +163,10 @@ document.addEventListener("DOMContentLoaded", () => {
         ctx.lineTo(x+w,y);
         ctx.closePath();
         ctx.fill();
+        ctx.fillStyle="#4a2a1f"; ctx.fillRect(x+w/3, y+h/2, w/3, h/2); // door
     }
 
-    function drawTent(x,w=40,h=30,layer="foreground"){
+    function drawTent(x,w=45,h=35,layer="foreground"){
         const y=getGroundY(x,layer)-h;
         ctx.fillStyle="#ff6b4b";
         ctx.beginPath();
@@ -183,7 +176,7 @@ document.addEventListener("DOMContentLoaded", () => {
         ctx.closePath();
         ctx.fill();
         ctx.fillStyle="#a2412a";
-        ctx.fillRect(x-2,y+h-6,4,6);
+        ctx.fillRect(x-2, y+h-8, 4, 8);
     }
 
     function drawCharacter(x,skin="#f1d1bb",clothes="#4a9",hat=false,tool=false,bag=false,scale=1,layer="foreground"){
@@ -200,20 +193,41 @@ document.addEventListener("DOMContentLoaded", () => {
         if(tool){ctx.fillStyle="#8a8a8a";ctx.fillRect(x+s,y+s,Math.max(3,Math.round(s*0.3)),Math.round(s*1.0))}
         if(bag){ctx.fillStyle="#8a6b42";ctx.fillRect(x-Math.round(s/2),y+s,Math.round(s/2),Math.round(s*0.8))}
     }
+
     function drawJosiah(x, layer="foreground", scale=1) {
-        drawCharacter(x, "#4a2f20", "#2b8a3e", false, false, false, scale, layer);
+        drawCharacter(x, "#4a2f20", "#2b8a3e", true, false, true, scale, layer);
     }
 
     function drawSolomon(x, layer="foreground", scale=1) {
-        drawCharacter(x, "#3a1f16", "#4a2b6b", false, false, false, scale, layer);
+        drawCharacter(x, "#3a1f16", "#4a2b6b", false, true, false, scale, layer);
     }
 
-    // ---------------- Scene Visuals with adjusted positions ----------------
+    // ---------------- Courthouse Interior ----------------
+    function drawCourthouseInterior(){
+        clearScene();
+        ctx.fillStyle="#2b2317"; ctx.fillRect(0,0,canvas.width,canvas.height); // walls
+        // Columns
+        ctx.fillStyle="rgba(255,255,220,0.08)";
+        ctx.fillRect(60,40,120,300); ctx.fillRect(620,40,120,300);
+        // Judge podium
+        ctx.fillStyle="#3b2d20"; ctx.fillRect(260,40,280,40);
+        ctx.fillStyle="#cfa06d"; ctx.fillRect(260,80,280,10);
+        // Benches
+        ctx.fillStyle="#3b2d20";
+        for(let r=0;r<3;r++) ctx.fillRect(80,120+r*40,640,18);
+        // Ceiling light gradient
+        const g=ctx.createRadialGradient(400,70,10,400,70,220);
+        g.addColorStop(0,"rgba(255,255,220,0.35)"); g.addColorStop(1,"rgba(0,0,0,0)");
+        ctx.fillStyle=g; ctx.fillRect(0,0,canvas.width,canvas.height);
+        drawHUD();
+    }
+
+    // ---------------- Scene Visuals ----------------
     function scene1Visual(){
         drawBackground();
-        drawJosiah(140,"foreground"); // Josiah
-        drawCharacter(260,"#f1d1bb","#4a9",false,false,false,1,"foreground"); // generic settler
-        drawHouse(520,48,36,"foreground");
+        drawJosiah(140,"foreground");
+        drawCharacter(260,"#f1d1bb","#4a9",false,false,false,1,"foreground");
+        drawHouse(520,50,40,"foreground");
         drawTree(680,22,"hills");
         drawTree(100,22,"hills");
     }
@@ -222,8 +236,8 @@ document.addEventListener("DOMContentLoaded", () => {
         drawBackground();
         drawCharacter(130,"#f1d1bb","#4a9",false,false,false,1,"foreground");
         drawCharacter(310,"#f1d1bb","#4a9",false,false,false,1,"foreground");
-        drawHouse(470,48,36,"foreground");
-        drawTent(610,40,30,"river");
+        drawHouse(470,50,40,"foreground");
+        drawTent(610,45,35,"river");
         drawTree(370,20,"hills");
         drawTree(730,18,"hills");
     }
@@ -232,16 +246,16 @@ document.addEventListener("DOMContentLoaded", () => {
         drawBackground();
         drawCharacter(150,"#f1d1bb","#4a9",false,false,false,1,"foreground");
         drawCharacter(290,"#f1d1bb","#4a9",false,false,false,1,"foreground");
-        drawTent(610,40,30,"river");
+        drawTent(610,45,35,"river");
         drawTree(430,20,"hills");
         drawTree(730,18,"hills");
     }
 
     function scene3Visual(){
         drawBackground();
-        drawJosiah(150,"foreground"); // Josiah in foreground
-        drawHouse(400,80,60,"foreground"); // courthouse
-        drawTent(600,40,30,"river");
+        drawJosiah(150,"foreground");
+        drawHouse(400,80,60,"foreground");
+        drawTent(600,45,35,"river");
         drawTree(500,18,"hills");
     }
 
@@ -249,15 +263,17 @@ document.addEventListener("DOMContentLoaded", () => {
         drawCourthouseInterior();
         drawJosiah(200,"foreground");
         drawSolomon(400,"foreground");
-        drawCharacter(600,"#f1d1bb","#4a9",false,false,false,1,"foreground"); // other NPC
+        drawCharacter(600,"#f1d1bb","#4a9",false,false,false,1,"foreground");
     }
+
     function josiahAndSolomonVisual(){
         drawBackground();
         drawJosiah(150,"foreground");
         drawSolomon(200,"foreground");
-        drawCharacter(250,"#f1d1bb","#4a9",false,false,false,1,"foreground"); // 
-        drawCharacter(300,"#f1d1bb","#4a9",false,false,false,1,"foreground"); // 
+        drawCharacter(250,"#f1d1bb","#4a9",false,false,false,1,"foreground");
+        drawCharacter(300,"#f1d1bb","#4a9",false,false,false,1,"foreground");
     }
+
     function saloonVisual(){
         clearScene();
         ctx.fillStyle="#8b5e3c"; ctx.fillRect(0,0,canvas.width,canvas.height);
@@ -273,7 +289,7 @@ document.addEventListener("DOMContentLoaded", () => {
         ctx.fillStyle="#900"; ctx.fillRect(0,GROUND_Y,canvas.width,100);
         drawCharacter(200,"#f1d1bb","#4a9",false,false,false,1,"foreground");
         drawCharacter(500,"#f1d1bb","#4a9",false,false,false,1,"foreground");
-        drawTent(400,40,30,"river");
+        drawTent(400,45,35,"river");
         drawTree(100,18,"hills");
     }
 
@@ -281,10 +297,39 @@ document.addEventListener("DOMContentLoaded", () => {
         drawBackground();
         drawCharacter(150,"#f1d1bb","#4a9",false,false,false,1,"foreground");
         drawTree(500,18,"hills");
-        drawTent(620,40,30,"river");
+        drawTent(620,45,35,"river");
         drawHouse(400,48,36,"foreground");
     }
 
+    // ---------------- Final Campfire ----------------
+    function drawFinalCampfireVisual() {
+        clearScene();
+        ctx.fillStyle = "#0b2336"; ctx.fillRect(0,0,canvas.width,canvas.height); // night sky
+
+        ctx.fillStyle = "#123a1f";
+        ctx.beginPath();
+        ctx.moveTo(0,300); ctx.quadraticCurveTo(200,260,400,300); ctx.quadraticCurveTo(600,340,800,300);
+        ctx.lineTo(800,400); ctx.lineTo(0,400); ctx.fill();
+
+        ctx.fillStyle="#12220f"; ctx.fillRect(0,320,canvas.width,80); // ground
+
+        // Fire glow
+        const fx = 380, fy = 280;
+        for (let r = 80; r > 0; r -= 20) {
+            const alpha = (80 - r)/150;
+            ctx.fillStyle = `rgba(255, ${120 + r}, 50, ${0.08 + alpha})`;
+            ctx.beginPath(); ctx.arc(fx, fy, r, 0, Math.PI*2); ctx.fill();
+        }
+
+        // Logs
+        ctx.fillStyle="#5b3a24"; ctx.fillRect(360,300,60,12); ctx.fillRect(342,310,12,60);
+
+        // NPCs
+        drawJosiah(340,"foreground",0.7);
+        drawSolomon(380,"foreground",0.7);
+        drawCharacter(420,305,"#f1d1bb","#e96",false,false,false,0.7);
+        drawCharacter(460,300,"#f1d1bb","#b85",false,false,false,0.7);
+    }
     // ---------------- Skip Hint ----------------
     const skipHint = document.createElement("p");
     skipHint.style.cssText = `color:#d4aa70;font-size:14px;margin-top:8px;font-family:'Kalam',cursive;text-align:center;`;
@@ -815,63 +860,4 @@ function sceneCoercion() {
 
         nextReflection();
     }
-
-    // helper to draw an evening campfire scene
-    function drawFinalCampfireVisual() {
-        clearScene();
-        // night sky
-        ctx.fillStyle = "#0b2336";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-        // distant hills
-        ctx.fillStyle = "#123a1f";
-        ctx.beginPath();
-        ctx.moveTo(0, 300);
-        ctx.quadraticCurveTo(200, 260, 400, 300);
-        ctx.quadraticCurveTo(600, 340, 800, 300);
-        ctx.lineTo(800, 400);
-        ctx.lineTo(0, 400);
-        ctx.fill();
-
-        // campfire ground
-        ctx.fillStyle = "#12220f";
-        ctx.fillRect(0, 320, canvas.width, 80);
-
-        // fire (glow)
-        const fx = 380, fy = 280;
-        for (let r = 80; r > 0; r -= 20) {
-            const alpha = (80 - r) / 150;
-            ctx.fillStyle = `rgba(255, ${120 + r}, 50, ${0.08 + alpha})`;
-            ctx.beginPath();
-            ctx.arc(fx, fy, r, 0, Math.PI * 2);
-            ctx.fill();
-        }
-
-        // logs
-        ctx.fillStyle = "#5b3a24";
-        ctx.fillRect(360, 300, 60, 12);
-        ctx.fillRect(342, 310, 12, 60);
-
-        // people around (small)
-        drawCharacter(320, 300, "#f1d1bb", "#4ac", false, false, false, 0.7); // Josiah
-        drawCharacter(360, 305, "#4a3426", "#2b2b2b", false, false, false, 0.7); // Solomon
-        drawCharacter(400, 305, "#f1d1bb", "#e96", false, false, false, 0.7); // Aiyana
-        drawCharacter(440, 300, "#f1d1bb", "#b85", false, false, false, 0.7); // Elias maybe present or absent depending on choices
-    }
-
-    // =========================
-    // helper visuals used by other scenes
-    // =========================
-    function scene4NPC1FollowupVisual() {
-        drawBackground();
-        drawCharacter(110, 240, "#f1d1bb", "#4ac", false, true, true);
-        drawCharacter(230, 240, "#f1d1bb", "#c84", false, false, true);
-        drawHouse(400, 260);
-        drawTree(550, 240, 18);
-        drawTent(600, 250);
-    }
-
-
-
-
 });
