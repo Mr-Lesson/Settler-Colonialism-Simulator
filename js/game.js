@@ -272,26 +272,67 @@ function drawCourthouseInterior(){
         drawCharacter(350,"#f1d1bb","#4a9",false,false,false,1,"foreground");
         drawCharacter(550,"#f1d1bb","#4a9",false,false,false,1,"foreground");
     }
-
-    function battleVisual(){
+    function battleVisual() {
         clearScene();
-        ctx.fillStyle="#1a1a1a"; ctx.fillRect(0,0,canvas.width,canvas.height); // dark battle tone
-        ctx.fillStyle="#900"; ctx.fillRect(0,GROUND_Y,canvas.width,100); // red ground
 
-        // Tents & trees for depth
-        drawTent(400,45,35,"river");
-        drawTree(100,18,"hills");
+        // Dark, ominous sky
+        ctx.fillStyle = "#1a1a1a";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        // Characters
-        drawCharacter(200,"#f1d1bb","#4a9",false,false,false,1,"foreground");
-        drawCharacter(500,"#f1d1bb","#4a9",false,false,false,1,"foreground");
-    }
-    function finalVisual(){
-        drawBackground();
-        drawCharacter(150,"#f1d1bb","#4a9",false,false,false,1,"foreground");
-        drawTree(500,18,"hills");
-        drawTent(620,45,35,"river");
-        drawHouse(400,48,36,"foreground");
+        // Red glow on ground for danger / fire
+        ctx.fillStyle = "rgba(150,0,0,0.5)";
+        ctx.fillRect(0, GROUND_Y, canvas.width, 100);
+
+        // Hills in background
+        drawTree(50, 18, "hills");
+        drawTree(750, 20, "hills");
+        drawTree(400, 22, "hills");
+
+        // Village tents and shacks
+        drawTent(150, 40, 30, "river");
+        drawTent(220, 35, 25, "river");
+        drawTent(300, 45, 35, "river");
+        drawHouse(500, 50, 40, "foreground");
+        drawHouse(600, 48, 36, "foreground");
+        drawTent(650, 40, 30, "river");
+
+        // Smoke rising from tents
+        for (let i = 0; i < 5; i++) {
+            const sx = 150 + i * 100;
+            const sy = GROUND_Y - 40 - Math.random() * 20;
+            ctx.fillStyle = `rgba(80,80,80,${0.2 + Math.random() * 0.3})`;
+            ctx.beginPath();
+            ctx.ellipse(sx, sy, 15 + Math.random() * 10, 30 + Math.random() * 10, Math.random() * 0.5, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        // NPCs fleeing or panicking
+        drawCharacter(180, "#f1d1bb", "#e96", false, false, false, 0.8); // fleeing
+        drawCharacter(210, "#f1d1bb", "#b85", false, false, false, 0.8);
+        drawCharacter(260, "#f1d1bb", "#4ac", false, false, false, 0.8);
+        drawCharacter(320, "#f1d1bb", "#e96", false, false, false, 0.8);
+        drawCharacter(480, "#f1d1bb", "#b85", false, false, false, 0.8);
+
+        // Player and allies (foreground)
+        drawCharacter(200, "#f1d1bb", "#4a9", false, false, false, 1, "foreground"); // player
+        drawJosiah(500, "foreground");
+        drawCharacter(550, "#f1d1bb", "#4a9", false, false, false, 1, "foreground"); // ally
+
+        // Add fire at some tents
+        ctx.fillStyle = "rgba(255,100,0,0.6)";
+        ctx.fillRect(150, GROUND_Y - 35, 20, 35);
+        ctx.fillRect(300, GROUND_Y - 40, 25, 40);
+
+        // Optional: small flying debris / chaos
+        for (let i = 0; i < 6; i++) {
+            ctx.fillStyle = "rgba(200,150,100,0.5)";
+            ctx.beginPath();
+            ctx.arc(150 + Math.random()*600, GROUND_Y - 10 - Math.random()*20, 3 + Math.random()*2, 0, Math.PI*2);
+            ctx.fill();
+        }
+
+        // Draw HUD last
+        drawHUD();
     }
 
         function drawFinalCampfireVisual() {
@@ -540,7 +581,6 @@ function scene3() {
             typeText(lines[i], nextLine);
             i++;
         } else {
-            // After the hearing text, call coercion scene directly
             sceneCourthouse();
         }
     }
@@ -554,16 +594,18 @@ function sceneCoercion() {
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     // Main characters
-    drawCharacter(520, 240, "#f1d1bb", "#b85", true, false, false, 0.95); // settler
-    drawCharacter(460, 260, "#f1d1bb", "#4ac", false, false, false, 0.95); // Josiah
-    drawCharacter(400, 260, "#4a3426", "#2b2b2b", false, false, false, 0.95); // Solomon
+    drawCharacter(520, "#f1d1bb", "#b85", true, false, false, 0.95); // settler
+    drawCharacter(460, "#f1d1bb", "#4ac", false, false, false, 0.95); // Josiah
+    drawCharacter(400, "#4a3426", "#2b2b2b", false, false, false, 0.95); // Solomon
+
 
     // Additional crowd
-    drawCharacter(360, 270, "#f1d1bb", "#e96", false, false, false, 0.8); 
-    drawCharacter(380, 280, "#f1d1bb", "#b85", false, false, false, 0.8); 
-    drawCharacter(400, 290, "#f1d1bb", "#4ac", false, false, false, 0.8); 
-    drawCharacter(440, 275, "#f1d1bb", "#e96", false, false, false, 0.8); 
-    drawCharacter(500, 285, "#f1d1bb", "#b85", false, false, false, 0.8); 
+    drawCharacter(360, "#f1d1bb", "#e96", false, false, false, 0.8); 
+    drawCharacter(380, "#f1d1bb", "#b85", false, false, false, 0.8); 
+    drawCharacter(400, "#f1d1bb", "#4ac", false, false, false, 0.8); 
+    drawCharacter(440, "#f1d1bb", "#e96", false, false, false, 0.8); 
+    drawCharacter(500, "#f1d1bb", "#b85", false, false, false, 0.8); 
+
 
     const lines = [
         "After the courthouse, you notice the settler who won the case speaking quietly to Josiah in a low voice.",
@@ -763,7 +805,7 @@ function sceneCoercion() {
     }
 
     function finalScene() {
-        finalVisual();
+        drawFinalCampfireVisual();
 
         const goldScore = gold;
         const moralScore = morality;
@@ -884,7 +926,7 @@ function sceneCoercion() {
             }
         }
 
-        endGame();
+        nextReflection();
     }
     function endGame(wrapText) {
         hideChoices();
